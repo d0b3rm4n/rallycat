@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require './lib/rallycat'
+
+case ARGV[0]
+when "cat"
+  exec "echo '#{Rallycat::Cat.new.story(ARGV[1])}' | less"
+else
+  puts "YOU DONE FUCKED UP. SEE HELP WHEN AVAILABLE"
+end
