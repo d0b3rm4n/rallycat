@@ -8,13 +8,15 @@ class HtmlToTextConverter
 
     fragment = Nokogiri::HTML.fragment(html)
 
-    fragment.css('p, div, ul, ol, br').each { |node| node.after("\n") }
+    fragment.css('br, p, div, ul, ol').each { |node| node.after("\n") }
 
     fragment.xpath('.//text()').each do |node|
-      if node.content =~ /\S/
+      if node.content =~ /\S/ # has non-whitespace characters
         node.content = node.text.gsub(/\s+/, ' ') # consolidate whitespace
+        node.content = node.text.lstrip
       else
-        node.remove # remove nodes that are only whitespace
+        # remove nodes that are only whitespace
+        node.remove unless node.content.include?("\n")
       end
     end
 

@@ -32,6 +32,12 @@ describe HtmlToTextConverter do
     text.should == " hello world "
   end
 
+  it 'turns <br /> into \n' do
+    html = '<div>foo<br /> bar</div>'
+    text = HtmlToTextConverter.new.parse(html)
+    text.should == "foo\nbar\n"
+  end
+
   it 'indents and stars items in a list' do
     html = '<ol><li>Item 1</li><li>Item 2</li><li>Item 3</li></ol>'
     text = HtmlToTextConverter.new.parse(html)
@@ -44,14 +50,18 @@ describe HtmlToTextConverter do
     expected = <<-TEXT
 This is a story:
 
+
   * list item 1
   * list item 2
 
+
 We need to do something important.
+
 
 NOTE:
 - a note with the word red:
 Some more text.
+
 
 QA:
 Instructions for QA.

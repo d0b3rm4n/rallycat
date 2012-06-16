@@ -1,63 +1,193 @@
 require 'spec_helper'
 require 'rally_rest_api'
-require 'nokogiri'
+require 'artifice'
+require 'cgi'
+require 'logger'
 
 describe Rallycat::Cat, '#story' do
 
   it 'outputs the rally story' do
-    VCR.use_cassette('connection') do
+    responder = lambda do |env|
+      @request = Rack::Request.new(env)
+      case @request.url
+      when 'https://rally1.rallydev.com/slm/webservice/current/user'
+        [200, {}, ['<foo>bar</foo>']]
+      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/1'
+        [200, {}, [
+          <<-XML
+<Task refObjectName="Change link to button">
+  <FormattedID>TA1234</FormattedID>
+  <State>Complete</State>
+  <TaskIndex>1</TaskIndex>
+</Task>
+
+XML
+        ]]
+      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/2'
+        [200, {}, [
+          <<-XML
+<Task refObjectName="Add confirmation">
+  <FormattedID>TA1235</FormattedID>
+  <State>In-Progress</State>
+  <TaskIndex>2</TaskIndex>
+</Task>
+
+XML
+        ]]
+      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/3'
+        [200, {}, [
+          <<-XML
+<Task refObjectName="Code Review">
+  <FormattedID>TA1236</FormattedID>
+  <State>Defined</State>
+  <TaskIndex>3</TaskIndex>
+</Task>
+
+XML
+        ]]
+      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/4'
+        [200, {}, [
+          <<-XML
+<Task refObjectName="QA Test">
+  <FormattedID>TA1237</FormattedID>
+  <State>Defined</State>
+  <TaskIndex>4</TaskIndex>
+</Task>
+
+XML
+        ]]
+      else
+        [200, {}, [
+          <<-XML
+
+<QueryResult>
+  <Results>
+    <Object>
+      <FormattedID>US4567</FormattedID>
+      <Name>[Rework] Change link to button</Name>
+      <PlanEstimate>1.0</PlanEstimate>
+      <ScheduleState>In-Progress</ScheduleState>
+      <TaskActualTotal>0.0</TaskActualTotal>
+      <TaskEstimateTotal>6.5</TaskEstimateTotal>
+      <TaskRemainingTotal>0.5</TaskRemainingTotal>
+      <Owner>scootin@fruity.com</Owner>
+      <Description>#{ CGI::escapeHTML('<div><p>This is the story</p></div><ul><li>Remember to do this.</li><li>And this too.</li></ul>') }</Description>
+      <Tasks>
+        <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/1" />
+        <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/2" />
+        <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/3" />
+        <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/4" />
+      </Tasks>
+    </Object>
+  </Results>
+</QueryResult>
+
+XML
+        ]]
+      end
+    end
+
+    Artifice.activate_with responder do
       @api = RallyRestAPI.new \
        base_url: 'https://rally1.rallydev.com/slm',
        username: 'foo.bar@rallycat.com',
-       password: 'password',
-       logger:   nil
+       password: 'password'
+       # logger:   Logger.new(STDOUT)
     end
 
     expected = <<-STORY
 
-# [US7176] - [ENG] add new sending failure with new error messages
+# [US4567] - [Rework] Change link to button
 
   Plan Estimate:   1.0
   State:           In-Progress
   Task Actual:     0.0
   Task Estimate:   6.5
   Task Remaining:  0.5
-  Owner:           foo.blah@bar.com
+  Owner:           scootin@fruity.com
 
- new sending failures from the sending failures report on production:
+This is the story
 
-  * 'Twitter::Error::Forbidden: Status is over 140 characters.'
-  * 'Koala::Facebook::APIError: OAuthException: (#100) The targeting param has invalid values for: countries'
-  * 'Koala::Facebook::APIError: OAuthException: (#100) The status you are trying to publish is a duplicate of, or too similar to, one that we recently posted to Twitter'
-  * 'Koala::Facebook::APIError: OAuthException: (#100) Sorry, this post contains a blocked URL'
-  * 'Koala::Facebook::APIError: OAuthException: Warning: This Message Contains Blocked Content: Some content in this message has been reported as abusive by Facebook users.'
+  * Remember to do this.
+  * And this too.
 
-We need to get the correct user facing errors off mikey.
-
-NOTE:
-- Here's the google doc with all updated error messages and user-friendly translations. Updated error messages and translations are in red:
-https://docs.google.com/a/wildfireapp.com/spreadsheet/ccc?key=0Aq5Y5yHYSsIKdFc1dEVvdE9EZVg3V0pKbFJCZUVYVkE#gid=0
-
-QA:
-I would not bother trying to reproduce each individual case. just adding them to the whitelist should be sufficient.
 
 ## TASKS
 
-[TA22035] [C] Add errors to the error whitelist with correct user facing message.
-[TA22119] [C] Dev QA
-[TA22120] [C] Code Review
-[TA22122] [C] Confirm on am-test
-[TA22121] [C] Deploy to am-test
-[TA22123] [C] QA Test
-[TA22124] [D] Demo to product owner
+[TA1234] [C] Change link to button
+[TA1235] [P] Add confirmation
+[TA1236] [D] Code Review
+[TA1237] [D] QA Test
 
 STORY
 
-    VCR.use_cassette('user_story') do
+
+    Artifice.activate_with responder do
       story_num = 'US7176'
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
     end
   end
 
+  it 'displays nothing under the tasks section when there are no tasks' do
+
+    responder = lambda do |env|
+      @request = Rack::Request.new(env)
+      if @request.url == 'https://rally1.rallydev.com/slm/webservice/current/user'
+        [200, {}, ['<foo>bar</foo>']]
+      else
+        [200, {}, [
+          <<-XML
+
+<QueryResult>
+  <Results>
+    <Object>
+      <FormattedID>US4567</FormattedID>
+      <Name>Sky Touch</Name>
+      <Description>#{ CGI::escapeHTML('<div>As a user<br /> ISBAT touch the sky.</div>') }</Description>
+    </Object>
+  </Results>
+</QueryResult>
+
+XML
+        ]]
+      end
+    end
+
+    Artifice.activate_with responder do
+      @api = RallyRestAPI.new \
+       base_url: 'https://rally1.rallydev.com/slm',
+       username: 'foo.bar@rallycat.com',
+       password: 'password'
+    end
+
+    expected = <<-STORY
+
+# [US4567] - Sky Touch
+
+  Plan Estimate:   
+  State:           
+  Task Actual:     
+  Task Estimate:   
+  Task Remaining:  
+  Owner:           
+
+As a user
+ISBAT touch the sky.
+
+## TASKS
+
+
+
+STORY
+
+    Artifice.activate_with responder do
+      story_num = 'US4567'
+      cat = Rallycat::Cat.new(@api)
+      cat.story(story_num).should == expected
+    end
+
+  end
+
 end
+

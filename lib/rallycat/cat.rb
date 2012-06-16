@@ -36,6 +36,8 @@ TEXT
     end
 
     def parse_tasks(story)
+      return '' unless story.tasks
+
       tasks        = story.tasks
       sorted_tasks = tasks.sort_by{ |t| t.task_index }
 
@@ -44,7 +46,8 @@ TEXT
       # [TA12345] [C] The name of the task.
       #
       sorted_tasks.map do |task|
-        "[#{task.formatted_i_d}] [#{task.state[0]}] #{task.name}"
+        state =  task.state == 'In-Progress' ? 'P' : task.state[0]
+        "[#{task.formatted_i_d}] [#{state}] #{task.name}"
       end.join("\n")
     end
   end
