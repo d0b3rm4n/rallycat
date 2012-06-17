@@ -106,11 +106,12 @@ XML
   Task Remaining:  0.5
   Owner:           scootin@fruity.com
 
+## DESCRIPTION
+
 This is the story
 
   * Remember to do this.
   * And this too.
-
 
 ## TASKS
 
@@ -176,8 +177,6 @@ As a user
 ISBAT touch the sky.
 
 ## TASKS
-
-
 
 STORY
 

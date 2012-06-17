@@ -11,7 +11,8 @@ module Rallycat
       results = @rally_api.find(:hierarchical_requirement, fetch: true) do
         equal :formatted_id, story_number
       end
-      parse_story results.first
+      story = parse_story(results.first)
+      story.gsub(/\n{3,}/, "\n\n") # prevent run-on line breaks 
     end
 
     # note: story.elements.keys => all properties exposed by rally
@@ -28,6 +29,7 @@ module Rallycat
   Owner:           #{story.owner}
 
 #{HtmlToTextConverter.new.parse(story.description)}
+
 ## TASKS
 
 #{parse_tasks(story)}
