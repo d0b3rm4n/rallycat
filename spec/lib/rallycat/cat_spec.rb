@@ -2,16 +2,27 @@ require 'spec_helper'
 require 'rally_rest_api'
 require 'artifice'
 require 'cgi'
-require 'logger'
 
 describe Rallycat::Cat, '#story' do
+
+  before do
+    responder = lambda do |env|
+      # 'https://rally1.rallydev.com/slm/webservice/current/user'
+      [200, {}, ['<foo>bar</foo>']]
+    end
+
+    Artifice.activate_with responder do
+      @api = RallyRestAPI.new \
+       base_url: 'https://rally1.rallydev.com/slm',
+       username: 'foo.bar@rallycat.com',
+       password: 'password'
+    end
+  end
 
   it 'outputs the rally story' do
     responder = lambda do |env|
       @request = Rack::Request.new(env)
       case @request.url
-      when 'https://rally1.rallydev.com/slm/webservice/current/user'
-        [200, {}, ['<foo>bar</foo>']]
       when 'https://rally1.rallydev.com/slm/webservice/1.17/task/1'
         [200, {}, [
           <<-XML
@@ -81,14 +92,6 @@ XML
       end
     end
 
-    Artifice.activate_with responder do
-      @api = RallyRestAPI.new \
-       base_url: 'https://rally1.rallydev.com/slm',
-       username: 'foo.bar@rallycat.com',
-       password: 'password'
-       # logger:   Logger.new(STDOUT)
-    end
-
     expected = <<-STORY
 
 # [US4567] - [Rework] Change link to button
@@ -127,31 +130,19 @@ STORY
   it 'displays nothing under the tasks section when there are no tasks' do
 
     responder = lambda do |env|
-      @request = Rack::Request.new(env)
-      if @request.url == 'https://rally1.rallydev.com/slm/webservice/current/user'
-        [200, {}, ['<foo>bar</foo>']]
-      else
-        [200, {}, [
-          <<-XML
-            <QueryResult>
-              <Results>
-                <Object>
-                  <FormattedID>US4567</FormattedID>
-                  <Name>Sky Touch</Name>
-                  <Description>#{ CGI::escapeHTML('<div>As a user<br /> ISBAT touch the sky.</div>') }</Description>
-                </Object>
-              </Results>
-            </QueryResult>
+      [200, {}, [
+        <<-XML
+          <QueryResult>
+            <Results>
+              <Object>
+                <FormattedID>US4567</FormattedID>
+                <Name>Sky Touch</Name>
+                <Description>#{ CGI::escapeHTML('<div>As a user<br /> ISBAT touch the sky.</div>') }</Description>
+              </Object>
+            </Results>
+          </QueryResult>
 XML
-        ]]
-      end
-    end
-
-    Artifice.activate_with responder do
-      @api = RallyRestAPI.new \
-       base_url: 'https://rally1.rallydev.com/slm',
-       username: 'foo.bar@rallycat.com',
-       password: 'password'
+      ]]
     end
 
     expected = <<-STORY
@@ -180,6 +171,31 @@ STORY
       cat.story(story_num).should == expected
     end
 
+  end
+
+  it 'displays User Story not found message when User Story does not exist' do
+
+
+    responder = lambda do |env|
+      @request = Rack::Request.new(env)
+      [200, {}, [
+        <<-XML
+          <OperationResult rallyAPIMajor="1" rallyAPIMinor="34">
+            <Errors>
+              <OperationResultError>Cannot find object to read</OperationResultError>
+            </Errors>
+            <Warnings/>
+          </OperationResult>
+XML
+      ]]
+    end
+
+    Artifice.activate_with responder do
+      story_num = 'US1337'
+      expected  = "Story (#{ story_num }) does not exist."
+      cat = Rallycat::Cat.new(@api)
+      cat.story(story_num).should == expected
+    end
   end
 
 end

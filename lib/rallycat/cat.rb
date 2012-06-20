@@ -8,9 +8,14 @@ module Rallycat
     end
 
     def story(story_number)
-      results = @rally_api.find(:hierarchical_requirement, fetch: true) do
-        equal :formatted_id, story_number
+      begin
+        results = @rally_api.find(:hierarchical_requirement, fetch: true) do
+          equal :formatted_id, story_number
+        end
+      rescue RuntimeError
+        return "Story (#{ story_number }) does not exist."
       end
+
       story = parse_story(results.first)
       story.gsub(/\n{3,}/, "\n\n") # prevent run-on line breaks 
     end
