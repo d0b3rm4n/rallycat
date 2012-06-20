@@ -28,6 +28,8 @@ module Rallycat
   Task Remaining:  #{story.task_remaining_total}
   Owner:           #{story.owner}
 
+## DESCRIPTION
+
 #{HtmlToTextConverter.new.parse(story.description)}
 
 ## TASKS
