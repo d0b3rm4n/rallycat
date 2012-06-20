@@ -12,8 +12,8 @@ class HtmlToTextConverter
 
     fragment.xpath('.//text()').each do |node|
       if node.content =~ /\S/ # has non-whitespace characters
-        node.content = node.text.gsub(/\s+/, ' ') # consolidate whitespace
-        node.content = node.text.lstrip
+        node.content = node.content.squeeze(' ') # consolidate whitespace
+        node.content = node.content.lstrip
       else
         # remove nodes that are only whitespace
         node.remove unless node.content.include?("\n")
@@ -21,13 +21,13 @@ class HtmlToTextConverter
     end
 
     # Make lists pretty:
-    #   * list item 1 
+    #   * list item 1
     #   * list item 2
     #   * list item 3
-    fragment.css('li').each do |node| 
+    fragment.css('li').each do |node|
       node.content = "  * #{node.content}\n"
     end
 
-    fragment.text
+    fragment.content
   end
 end
