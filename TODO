@@ -1,10 +1,13 @@
-# Rallycat
+# Rallycat TODO
 
-Slow as balls? Make nice wait messages
+* Slow as balls? Make nice wait messages
+* Reconcile USER vs username (cli arg vs config attribute)
+* Add help
+* Add man page
 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    rallycat less US666
-
+## Ideas
 
 US666 - My Story
 =================
@@ -43,3 +46,4 @@ rally.vim -> Making User Stories from Vim
 Show Andrew on frontpage ## 2 ## 2
 Do some shit with Redis ## 3 ## 3
 Redo everything ever ## 140 ## 140
+
