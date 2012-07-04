@@ -2,10 +2,11 @@
 
 * Slow as balls? Make nice wait messages
 * Reconcile USER vs username (cli arg vs config attribute)
+* Handle case when description is nil (currently blows up)
 * Add help
 * Add man page
-* move giant artifice responder to helper
-* integration specs
+* Move giant artifice responder to helper
+* Integration specs
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
