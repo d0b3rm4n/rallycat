@@ -18,11 +18,12 @@ module Rallycat
         return "Story (#{ story_number }) does not exist."
       end
 
-      story = parse_story(results.first)
-      story.gsub(/\n{3,}/, "\n\n") # prevent run-on line breaks 
+      consolidate_newlines parse_story(results.first)
     end
 
-    # note: story.elements.keys => all properties exposed by rally
+    private
+
+    # NOTE: story.elements.keys => all properties exposed by rally
     def parse_story(story)
       <<-TEXT
 
@@ -60,6 +61,10 @@ TEXT
         state =  task.state == 'In-Progress' ? 'P' : task.state[0]
         "[#{task.formatted_i_d}] [#{state}] #{task.name}"
       end.join("\n")
+    end
+
+    def consolidate_newlines(story)
+      story.gsub(/\n{3,}/, "\n\n")
     end
   end
 end
