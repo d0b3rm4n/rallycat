@@ -38,7 +38,7 @@ module Rallycat
 
 ## DESCRIPTION
 
-#{HtmlToTextConverter.new.parse(story.description)}
+#{HtmlToTextConverter.new(story.description).parse}
 
 ## TASKS
 

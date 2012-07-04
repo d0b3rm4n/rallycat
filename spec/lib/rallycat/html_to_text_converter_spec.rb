@@ -4,43 +4,43 @@ describe HtmlToTextConverter do
 
   it 'strips away <p> tags and adds a newline to the end of the paragraph' do
     html = '<p>This is a one sentence paragraph.</p>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "This is a one sentence paragraph.\n"
   end
 
   it 'strips away <p> tags and adds a newline to the end of each paragraph' do
     html = '<p>Paragraph 1</p><p>Paragraph 2</p>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "Paragraph 1\nParagraph 2\n"
   end
 
   it 'strips away spaces in between tags' do
     html = '<p>Paragraph 1</p>  <p>Paragraph 2</p>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "Paragraph 1\nParagraph 2\n"
   end
 
   it 'consolidates whitespace' do
     html = '<p>I like         <b>hot sauce</b>.</p>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "I like hot sauce.\n"
   end
 
   it 'converts nbsp to a regular space' do
     html = ' hello&nbsp;world '
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == " hello world "
   end
 
   it 'turns <br /> into \n' do
     html = '<div>foo<br /> bar</div>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "foo\nbar\n"
   end
 
   it 'indents and stars items in a list' do
     html = '<ol><li>Item 1</li><li>Item 2</li><li>Item 3</li></ol>'
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == "  * Item 1\n  * Item 2\n  * Item 3\n\n"
   end
 
@@ -67,7 +67,7 @@ QA:
 Instructions for QA.
 TEXT
 
-    text = HtmlToTextConverter.new.parse(html)
+    text = HtmlToTextConverter.new(html).parse
     text.should == expected
   end
 end

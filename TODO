@@ -4,6 +4,8 @@
 * Reconcile USER vs username (cli arg vs config attribute)
 * Add help
 * Add man page
+* move giant artifice responder to helper
+* integration specs
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
