@@ -15,77 +15,6 @@ describe Rallycat::Cat, '#story' do
   end
 
   it 'outputs the rally story' do
-    responder = lambda do |env|
-      @request = Rack::Request.new(env)
-      case @request.url
-      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/1'
-        [200, {}, [
-          <<-XML
-            <Task refObjectName="Change link to button">
-              <FormattedID>TA1234</FormattedID>
-              <State>Complete</State>
-              <TaskIndex>1</TaskIndex>
-            </Task>
-XML
-        ]]
-      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/2'
-        [200, {}, [
-          <<-XML
-            <Task refObjectName="Add confirmation">
-              <FormattedID>TA1235</FormattedID>
-              <State>In-Progress</State>
-              <TaskIndex>2</TaskIndex>
-            </Task>
-XML
-        ]]
-      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/3'
-        [200, {}, [
-          <<-XML
-            <Task refObjectName="Code Review">
-              <FormattedID>TA1236</FormattedID>
-              <State>Defined</State>
-              <TaskIndex>3</TaskIndex>
-            </Task>
-XML
-        ]]
-      when 'https://rally1.rallydev.com/slm/webservice/1.17/task/4'
-        [200, {}, [
-          <<-XML
-            <Task refObjectName="QA Test">
-              <FormattedID>TA1237</FormattedID>
-              <State>Defined</State>
-              <TaskIndex>4</TaskIndex>
-            </Task>
-XML
-        ]]
-      else
-        [200, {}, [
-          <<-XML
-            <QueryResult>
-              <Results>
-                <Object>
-                  <FormattedID>US4567</FormattedID>
-                  <Name>[Rework] Change link to button</Name>
-                  <PlanEstimate>1.0</PlanEstimate>
-                  <ScheduleState>In-Progress</ScheduleState>
-                  <TaskActualTotal>0.0</TaskActualTotal>
-                  <TaskEstimateTotal>6.5</TaskEstimateTotal>
-                  <TaskRemainingTotal>0.5</TaskRemainingTotal>
-                  <Owner>scootin@fruity.com</Owner>
-                  <Description>#{ CGI::escapeHTML('<div><p>This is the story</p></div><ul><li>Remember to do this.</li><li>And this too.</li></ul>') }</Description>
-                  <Tasks>
-                    <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/1" />
-                    <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/2" />
-                    <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/3" />
-                    <Task ref="https://rally1.rallydev.com/slm/webservice/1.17/task/4" />
-                  </Tasks>
-                </Object>
-              </Results>
-            </QueryResult>
-XML
-        ]]
-      end
-    end
 
     expected = <<-STORY
 
@@ -114,41 +43,17 @@ This is the story
 
 STORY
 
+    responder = RallyStoryResponder.new
 
-    Artifice.activate_with responder do
+    Artifice.activate_with responder.endpoint do
       story_num = 'US7176'
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
     end
+    p responder.requests.map(&:url)
   end
 
   it 'does the defects' do
-    responder = lambda do |env|
-      @request = Rack::Request.new(env)
-      p @request.url
-      case @request.url
-      when "https://rally1.rallydev.com/slm/webservice/current/Defect?query=%28FormattedId+%3D+DE1234%29&fetch=true"
-        [200, {}, [
-          <<-XML
-            <QueryResult>
-              <Results>
-                <Object>
-                  <FormattedID>DE1234</FormattedID>
-                  <Name>[Rework] Change link to button</Name>
-                  <PlanEstimate>1.0</PlanEstimate>
-                  <ScheduleState>In-Progress</ScheduleState>
-                  <TaskActualTotal>0.0</TaskActualTotal>
-                  <TaskEstimateTotal>6.5</TaskEstimateTotal>
-                  <TaskRemainingTotal>0.5</TaskRemainingTotal>
-                  <Owner>scootin@fruity.com</Owner>
-                  <Description>#{ CGI::escapeHTML('<div><p>this is a task</p></div>') }</Description>
-                </Object>
-              </Results>
-            </QueryResult>
-XML
-        ]]
-      end
-    end
 
     expected = <<-STORY
 
@@ -163,13 +68,15 @@ XML
 
 ## DESCRIPTION
 
-this is a task
+This is a defect.
 
 ## TASKS
 
 STORY
 
-    Artifice.activate_with responder do
+    responder = RallyDefectResponder.new
+
+    Artifice.activate_with responder.endpoint do
       story_num = 'DE1234'
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected

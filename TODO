@@ -5,7 +5,6 @@
 * Handle case when description is nil (currently blows up)
 * Add help
 * Add man page
-* Move giant artifice responder to helper
 * Integration specs
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
