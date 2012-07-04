@@ -20,11 +20,7 @@ option_parser.parse!
 
 case ARGV.shift
 when "cat"
-  @api = RallyRestAPI.new \
-   base_url: 'https://rally1.rallydev.com/slm',
-   username: options[:user],
-   password: options[:password]
-   # logger:   Logger.new(STDOUT)
+  @api = Rallycat::Connection.new(options[:user], options[:password]).api
 
   puts Rallycat::Cat.new(@api).story(ARGV.shift)
 else

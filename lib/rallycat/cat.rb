@@ -8,8 +8,10 @@ module Rallycat
     end
 
     def story(story_number)
+      story_type = story_number.start_with?('US') ? :hierarchical_requirement : :defect
+
       begin
-        results = @rally_api.find(:hierarchical_requirement, fetch: true) do
+        results = @rally_api.find(story_type, fetch: true) do
           equal :formatted_id, story_number
         end
       rescue RuntimeError

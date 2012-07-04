@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'rally_rest_api'
-require 'artifice'
 require 'cgi'
 
 describe Rallycat::Cat, '#story' do
@@ -12,10 +10,7 @@ describe Rallycat::Cat, '#story' do
     end
 
     Artifice.activate_with responder do
-      @api = RallyRestAPI.new \
-       base_url: 'https://rally1.rallydev.com/slm',
-       username: 'foo.bar@rallycat.com',
-       password: 'password'
+      @api = Rallycat::Connection.new('foo.bar@rallycat.com', 'password').api
     end
   end
 
@@ -127,7 +122,62 @@ STORY
     end
   end
 
+  it 'does the defects' do
+    responder = lambda do |env|
+      @request = Rack::Request.new(env)
+      p @request.url
+      case @request.url
+      when "https://rally1.rallydev.com/slm/webservice/current/Defect?query=%28FormattedId+%3D+DE1234%29&fetch=true"
+        [200, {}, [
+          <<-XML
+            <QueryResult>
+              <Results>
+                <Object>
+                  <FormattedID>DE1234</FormattedID>
+                  <Name>[Rework] Change link to button</Name>
+                  <PlanEstimate>1.0</PlanEstimate>
+                  <ScheduleState>In-Progress</ScheduleState>
+                  <TaskActualTotal>0.0</TaskActualTotal>
+                  <TaskEstimateTotal>6.5</TaskEstimateTotal>
+                  <TaskRemainingTotal>0.5</TaskRemainingTotal>
+                  <Owner>scootin@fruity.com</Owner>
+                  <Description>#{ CGI::escapeHTML('<div><p>this is a task</p></div>') }</Description>
+                </Object>
+              </Results>
+            </QueryResult>
+XML
+        ]]
+      end
+    end
+
+    expected = <<-STORY
+
+# [DE1234] - [Rework] Change link to button
+
+  Plan Estimate:   1.0
+  State:           In-Progress
+  Task Actual:     0.0
+  Task Estimate:   6.5
+  Task Remaining:  0.5
+  Owner:           scootin@fruity.com
+
+## DESCRIPTION
+
+this is a task
+
+## TASKS
+
+STORY
+
+    Artifice.activate_with responder do
+      story_num = 'DE1234'
+      cat = Rallycat::Cat.new(@api)
+      cat.story(story_num).should == expected
+    end
+  end
+
   it 'displays nothing under the tasks section when there are no tasks' do
+
 
     responder = lambda do |env|
       [200, {}, [

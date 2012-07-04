@@ -1,0 +1,45 @@
+# Rallycat
+
+Slow as balls? Make nice wait messages
+
+
+    rallycat less US666
+
+
+US666 - My Story
+=================
+
+````
+rallycat update --complete --blocked [-cdpsb] -o "Adam Tanner" TA1932`
+
+rallycat update -p -o "Emilio Cavazos" TA9832
+rallycat update -b TA1823 -m "AM sucks."
+````
+
+### Notes
+
+* Unblock by setting a new state
+* Don't allow setting a new state and blocking, -b blocks current state
+
+
+## Stats
+* Stories in progress
+* Stories accepted
+* Stories not accepted
+* Total To-Do Hours
+
+
+
+rally.vim -> Making User Stories from Vim
+
+## Rallycat Futures
+
+        cat tasks | rallycat boilerplate
+
+[DESCRIPTION] [ESTIMATE] [TO-DO]
+
+### Task Example
+
+Show Andrew on frontpage ## 2 ## 2
+Do some shit with Redis ## 3 ## 3
+Redo everything ever ## 140 ## 140
