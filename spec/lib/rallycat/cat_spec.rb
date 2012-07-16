@@ -50,7 +50,6 @@ STORY
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
     end
-    p responder.requests.map(&:url)
   end
 
   it 'does the defects' do
@@ -127,11 +126,9 @@ STORY
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
     end
-
   end
 
   it 'displays User Story not found message when User Story does not exist' do
-
 
     responder = lambda do |env|
       @request = Rack::Request.new(env)

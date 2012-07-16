@@ -1,28 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'optparse'
 require 'rallycat'
-require 'rally_rest_api'
 
-
-options = {}
-option_parser = OptionParser.new do |opts|
-  opts.on('-u USER') do |user|
-    options[:user] = user
-  end
-
-  opts.on('-p PASSWORD') do |password|
-    options[:password] = password
-  end
-end
-
-option_parser.parse!
-
-case ARGV.shift
-when "cat"
-  api = Rallycat::Connection.new(options[:user], options[:password]).api
-
-  puts Rallycat::Cat.new(api).story(ARGV.shift)
-else
-  puts 'only support for `cat` exists at the moment.'
-end
+Rallycat::CLI.new(ARGV).run

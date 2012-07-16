@@ -2,6 +2,7 @@
 
 * Slow as balls? Make nice wait messages
 * Reconcile USER vs username (cli arg vs config attribute)
+* Handle case when story does not exist (currently blows up)
 * Handle case when description is nil (currently blows up)
 * Add help
 * Add man page

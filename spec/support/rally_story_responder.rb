@@ -1,3 +1,5 @@
+require 'cgi'
+
 class RallyStoryResponder
 
   attr_reader :requests
