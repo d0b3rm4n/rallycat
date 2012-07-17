@@ -10,6 +10,9 @@ module Rallycat
     def task(task_number, attributes)
       task = find_task(task_number)
 
+      # When we set the state of the task and we don't explicitly set it to
+      # blocked we want to remove the block. In our workflow, when you change
+      # the state of the task it is also unblocked.
       if attributes[:state] && !attributes[:blocked]
         attributes[:blocked] = false
       end
