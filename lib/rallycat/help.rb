@@ -13,13 +13,17 @@ Configuration:
   at runtime and will take higher precedence than the configuration file.
 
 Global Options:
-  -u [USERNAME]                   # The Rally user
-  -p [PASSWORD]                   # The password for the Rally user
-  -h, --help                      # Displays this help text
+  -u [USERNAME]                           # The Rally user
+  -p [PASSWORD]                           # The password for the Rally user
+  -h, --help                              # Displays this help text
 
 Commands:
-  rallycat cat [STORY NUMBER]     # Displays the user story
-  rallycat help                   # Displays this help text
+  rallycat cat <story number>             # Displays the user story or defect
+  rallycat update <task number>           # Displays the user story
+    [--blocked | -b] [--in-progress | -i]
+    [--completed | -c] [--defined | -d]
+    [--owner | -o <fullname>]
+  rallycat help                           # Displays this help text
 
 
       HELP

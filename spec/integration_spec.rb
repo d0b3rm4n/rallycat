@@ -44,7 +44,7 @@ describe 'Rallycat' do
       string_io.rewind
       expected = string_io.read
 
-      expected.should include("rallycat cat [STORY NUMBER]")
+      expected.should include("rallycat cat <story number>")
       expected.should include("Displays the user story")
     end
   end

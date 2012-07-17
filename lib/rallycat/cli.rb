@@ -41,7 +41,9 @@ module Rallycat
 
       option_parser.parse! @argv
 
-      case @argv.shift
+      command = @argv.shift
+
+      case command
       when 'cat'
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
@@ -69,7 +71,7 @@ module Rallycat
         # `puts` calls `to_s`
         @stdout.puts Rallycat::Help.new
       else
-        @stdout.puts 'only support for `cat` exists at the moment.'
+        @stdout.puts "'#{command}' is not a supported command. See 'rallycat help'."
       end
     end
   end

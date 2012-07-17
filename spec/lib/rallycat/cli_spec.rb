@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Rallycat::CLI do
   it 'should default to STDOUT' do
-    STDOUT.should_receive(:puts).with 'only support for `cat` exists at the moment.'
+    STDOUT.should_receive(:puts).with "'' is not a supported command. See 'rallycat help'."
     cli = Rallycat::CLI.new []
     cli.run
   end
@@ -17,6 +17,6 @@ describe Rallycat::CLI, '#run' do
     cli.run
 
     sout.rewind
-    sout.read.should == "only support for `cat` exists at the moment.\n"
+    sout.read.should == "'foo' is not a supported command. See 'rallycat help'.\n"
   end
 end
