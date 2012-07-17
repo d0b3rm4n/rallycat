@@ -1,5 +1,14 @@
 # Rallycat TODO
 
+* add update behavior for stories
+* add update behavior for defects
+* add sub-command support (so we can use -p for in-progress)
+* give user friendly error messages
+  * when you don't pass in a task
+  * when task does not exist
+  * when owner cannot be found
+* update help
+* make "help" default output
 * Slow as balls? Make nice wait messages
 * Add man page
 
@@ -34,6 +43,9 @@ rallycat update -b TA1823 -m "Fix specs."
 rally.vim -> Making User Stories from Vim
 
 ## Rallycat Futures
+
+* current iteration (or iteration) output (just story numbers and titles)
+
 
         cat tasks | rallycat boilerplate
 
