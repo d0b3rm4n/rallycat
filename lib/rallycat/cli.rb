@@ -70,7 +70,7 @@ module Rallycat
 
         begin
           @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
-        rescue Rallycat::Update::UserNotFound => e
+        rescue Rallycat::Update::UserNotFound, Rallycat::Update::TaskNotFound => e
           abort e.message
         end
       when 'help'

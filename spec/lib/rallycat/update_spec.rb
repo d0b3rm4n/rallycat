@@ -93,7 +93,7 @@ describe Rallycat::Update do
   end
 
   it 'raises when the user could not be found' do
-    responder = RallyNoResultsResponder.new
+    responder = RallyTaskUpdateResponder.new
 
     Artifice.activate_with responder do
       task_num = "TA6666"
@@ -103,5 +103,19 @@ describe Rallycat::Update do
         update.task(task_num, state: 'Completed', owner: 'Norman Notreal')
       }.should raise_error(Rallycat::Update::UserNotFound, 'User (Norman Notreal) does not exist.')
     end
+  end
+
+  it 'raises when the task could not be found' do
+    responder = RallyNoResultsResponder.new
+
+    Artifice.activate_with responder do
+      task_num = "TA6666"
+      update = Rallycat::Update.new(@api)
+
+      lambda {
+        update.task(task_num, state: 'Completed')
+      }.should raise_error(Rallycat::Update::TaskNotFound, 'Task (TA6666) does not exist.')
+    end
+
   end
 end

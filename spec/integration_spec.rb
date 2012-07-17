@@ -145,7 +145,7 @@ describe 'Rallycat' do
 
         cli = Rallycat::CLI.new %w{ update -o Norman\ Notreal TA6666 -u foo.bar@rallycat.com -p password }, sout
 
-        task_responder = RallyNoResultsResponder.new
+        task_responder = RallyTaskUpdateResponder.new
 
         lambda {
           Artifice.activate_with task_responder do
@@ -166,6 +166,20 @@ describe 'Rallycat' do
             cli.run
           end
         }.should raise_error(SystemExit, 'The "update" command requires a task number.')
+      end
+
+      it 'aborts when a task does not exist' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -i TA9999 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyNoResultsResponder.new
+
+        lambda {
+          Artifice.activate_with task_responder do
+            cli.run
+          end
+        }.should raise_error(SystemExit, 'Task (TA9999) does not exist.')
       end
     end
   end
