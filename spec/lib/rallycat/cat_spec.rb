@@ -22,7 +22,6 @@ describe Rallycat::Cat, '#story' do
 
   Plan Estimate:   1.0
   State:           In-Progress
-  Task Actual:     0.0
   Task Estimate:   6.5
   Task Remaining:  0.5
   Owner:           scootin@fruity.com
@@ -60,7 +59,6 @@ STORY
 
   Plan Estimate:   1.0
   State:           In-Progress
-  Task Actual:     0.0
   Task Estimate:   6.5
   Task Remaining:  0.5
   Owner:           scootin@fruity.com
@@ -108,7 +106,6 @@ XML
 
   Plan Estimate:   
   State:           
-  Task Actual:     
   Task Estimate:   
   Task Remaining:  
   Owner:           

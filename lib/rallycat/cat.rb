@@ -32,7 +32,6 @@ module Rallycat
 
   Plan Estimate:   #{story.plan_estimate}
   State:           #{story.schedule_state}
-  Task Actual:     #{story.task_actual_total}
   Task Estimate:   #{story.task_estimate_total}
   Task Remaining:  #{story.task_remaining_total}
   Owner:           #{story.owner}
