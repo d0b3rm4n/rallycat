@@ -128,6 +128,20 @@ describe 'Rallycat' do
         sout.read.should include('Task (TA6666) was assigned to "Freddy Fender".')
       end
 
+      it 'aborts when the owner does not exist' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -o Norman\ Notreal TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        lambda {
+          Artifice.activate_with task_responder do
+            cli.run
+          end
+        }.should raise_error(SystemExit, 'User (Norman Notreal) does not exist.')
+      end
+
       it 'aborts when a task number is not given' do
         sout = StringIO.new
 

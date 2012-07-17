@@ -67,6 +67,19 @@ class RallyTaskUpdateResponder
           </QueryResult>
         XML
       ]]
+    elsif request.url == 'https://rally1.rallydev.com/slm/webservice/current/User?query=%28DisplayName+%3D+%22Norman+Notreal%22%29'
+      [200, {}, [
+        <<-XML
+          <QueryResult rallyAPIMajor="1" rallyAPIMinor="17">
+          <Errors/>
+          <Warnings/>
+          <TotalResultCount>0</TotalResultCount>
+          <StartIndex>1</StartIndex>
+          <PageSize>20</PageSize>
+          <Results/>
+          </QueryResult>
+        XML
+     ]]
     elsif request.url == 'https://rally1.rallydev.com/slm/webservice/1.17/user/4567'
       [200, {}, [
         <<-XML

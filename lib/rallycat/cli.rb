@@ -64,7 +64,11 @@ module Rallycat
         opts[:state]   = "Defined"       if options[:defined]
         opts[:owner]   = options[:owner] if options[:owner]
 
-        @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
+        begin
+          @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
+        rescue Rallycat::Update::UserNotFound => e
+          abort e.message
+        end
       when 'help'
         # `puts` calls `to_s`
         @stdout.puts Rallycat::Help.new

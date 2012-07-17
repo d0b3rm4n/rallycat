@@ -1,5 +1,7 @@
 module Rallycat
   class Update
+    class UserNotFound < StandardError; end
+
     def initialize(api)
       @api = api
     end
@@ -26,6 +28,11 @@ module Rallycat
         user_results = @api.find(:user) do
           equal :display_name, user_name
         end
+
+        if user_results.total_result_count == 0
+          raise UserNotFound, "User (#{attributes[:owner]}) does not exist."
+        end
+
         attributes[:owner] = user_results.first.login_name
       end
 
