@@ -45,12 +45,17 @@ module Rallycat
       when 'cat'
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
-        @stdout.puts Rallycat::Cat.new(api).story(@argv.shift)
+        story_number = @argv.shift
+
+        abort 'The "cat" command requires a story or defect number.' unless story_number
+
+        @stdout.puts Rallycat::Cat.new(api).story(story_number)
       when 'update'
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
-
         task_number = @argv.shift
+
+        abort 'The "update" command requires a task number.' unless task_number
 
         opts = {}
         opts[:blocked] = true            if options[:blocked]

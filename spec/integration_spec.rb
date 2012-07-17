@@ -18,9 +18,22 @@ describe 'Rallycat' do
       sout.rewind
       sout.read.should include('# [US4567] - [Rework] Change link to button')
     end
+
+    it 'aborts when a story number is not given' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ cat -u foo.bar@rallycat.com -p password }, sout
+
+      lambda {
+        Artifice.activate_with RallyStoryResponder.new do
+          cli.run
+        end
+      }.should raise_error(SystemExit, 'The "cat" command requires a story or defect number.')
+    end
   end
 
   context 'help' do
+
     it 'displays a help screen to the user' do
       string_io = StringIO.new
 
@@ -113,6 +126,20 @@ describe 'Rallycat' do
 
         sout.rewind
         sout.read.should include('Task (TA6666) was assigned to "Freddy Fender".')
+      end
+
+      it 'aborts when a task number is not given' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        lambda {
+          Artifice.activate_with task_responder do
+            cli.run
+          end
+        }.should raise_error(SystemExit, 'The "update" command requires a task number.')
       end
     end
   end
