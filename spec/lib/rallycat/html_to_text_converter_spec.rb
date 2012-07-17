@@ -8,6 +8,11 @@ describe HtmlToTextConverter do
     text.should == "This is a one sentence paragraph.\n"
   end
 
+  it 'returns an empty string when given nil' do
+    text = HtmlToTextConverter.new(nil).parse
+    text.should == ''
+  end
+
   it 'strips away <p> tags and adds a newline to the end of each paragraph' do
     html = '<p>Paragraph 1</p><p>Paragraph 2</p>'
     text = HtmlToTextConverter.new(html).parse

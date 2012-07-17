@@ -7,6 +7,8 @@ class HtmlToTextConverter
   end
 
   def parse
+    return '' unless @html_string
+
     html = pre_parse
 
     @fragment = Nokogiri::HTML.fragment(html)
