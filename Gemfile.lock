@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rallycat (0.2.0)
+    rallycat (0.3.0)
       builder
       nokogiri
       rally_rest_api
