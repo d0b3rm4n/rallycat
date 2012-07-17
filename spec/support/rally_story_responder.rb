@@ -81,6 +81,7 @@ XML
                   </Tasks>
                 </Object>
               </Results>
+              <TotalResultCount>1</TotalResultCount>
             </QueryResult>
 XML
         ]]

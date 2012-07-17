@@ -52,7 +52,7 @@ STORY
     end
   end
 
-  it 'does the defects' do
+  it 'parses the defect' do
 
     expected = <<-STORY
 
@@ -96,6 +96,7 @@ STORY
                 <Description>#{ CGI::escapeHTML('<div>As a user<br /> ISBAT touch the sky.</div>') }</Description>
               </Object>
             </Results>
+            <TotalResultCount>1</TotalResultCount>
           </QueryResult>
 XML
       ]]
@@ -123,30 +124,6 @@ STORY
 
     Artifice.activate_with responder do
       story_num = 'US4567'
-      cat = Rallycat::Cat.new(@api)
-      cat.story(story_num).should == expected
-    end
-  end
-
-  it 'displays User Story not found message when User Story does not exist' do
-
-    responder = lambda do |env|
-      @request = Rack::Request.new(env)
-      [200, {}, [
-        <<-XML
-          <OperationResult rallyAPIMajor="1" rallyAPIMinor="34">
-            <Errors>
-              <OperationResultError>Cannot find object to read</OperationResultError>
-            </Errors>
-            <Warnings/>
-          </OperationResult>
-XML
-      ]]
-    end
-
-    Artifice.activate_with responder do
-      story_num = 'US1337'
-      expected  = "Story (#{ story_num }) does not exist."
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
     end

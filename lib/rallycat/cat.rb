@@ -10,13 +10,11 @@ module Rallycat
     def story(story_number)
       story_type = story_number.start_with?('US') ? :hierarchical_requirement : :defect
 
-      begin
-        results = @rally_api.find(story_type, fetch: true) do
-          equal :formatted_id, story_number
-        end
-      rescue RuntimeError
-        return "Story (#{ story_number }) does not exist."
+      results = @rally_api.find(story_type, fetch: true) do
+        equal :formatted_id, story_number
       end
+
+      return "Story (#{ story_number }) does not exist." if results.total_result_count == 0
 
       consolidate_newlines parse_story(results.first)
     end

@@ -32,6 +32,7 @@ class RallyDefectResponder
                   <Description>#{ CGI::escapeHTML('<div><p>This is a defect.</p></div>') }</Description>
                 </Object>
               </Results>
+              <TotalResultCount>1</TotalResultCount>
             </QueryResult>
 XML
         ]]
