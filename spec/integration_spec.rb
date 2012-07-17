@@ -22,7 +22,7 @@ describe 'Rallycat' do
     it 'aborts when a story number is not given' do
       sout = StringIO.new
 
-      cli = Rallycat::CLI.new %w{ cat -u foo.bar@rallycat.com -p password }, sout
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password cat }, sout
 
       lambda {
         Artifice.activate_with RallyStoryResponder.new do
@@ -34,7 +34,7 @@ describe 'Rallycat' do
     it 'aborts when the story does not exist' do
       sout = StringIO.new
 
-      cli = Rallycat::CLI.new %w{ cat US9999 -u foo.bar@rallycat.com -p password }, sout
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password cat US9999 }, sout
 
       lambda {
         Artifice.activate_with RallyNoResultsResponder.new do
@@ -68,7 +68,7 @@ describe 'Rallycat' do
       it 'sets the state to in-progress' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -i TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ update -p TA6666 -u foo.bar@rallycat.com -p password }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -157,7 +157,7 @@ describe 'Rallycat' do
       it 'aborts when a task number is not given' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 

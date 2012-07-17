@@ -9,7 +9,8 @@ module Rallycat
 
     def run
       options = {}
-      option_parser = OptionParser.new do |opts|
+
+      global = OptionParser.new do |opts|
         opts.on('-u USERNAME', '--username') do |user|
           options[:user] = user
         end
@@ -17,31 +18,42 @@ module Rallycat
         opts.on('-p PASSWORD', '--password') do |password|
           options[:password] = password
         end
-
-        opts.on('-b', '--blocked') do |blocked|
-          options[:blocked] = true
-        end
-
-        opts.on('-i', '--in-progress') do |in_progress|
-          options[:in_progress] = true
-        end
-
-        opts.on('-c', '--completed') do |completed|
-          options[:completed] = true
-        end
-
-        opts.on('-d', '--defined') do |defined|
-          options[:defined] = true
-        end
-
-        opts.on('-o OWNER', '--owner') do |owner|
-          options[:owner] = owner
-        end
       end
 
-      option_parser.parse! @argv
+      commands = {
+        'cat' => OptionParser.new,
+
+        'update' => OptionParser.new do |opts|
+          opts.banner = 'Usage: rallycat update <story number> [options]'
+
+          opts.on('-b', '--blocked') do |blocked|
+            options[:blocked] = true
+          end
+
+          opts.on('-p', '--in-progress') do |in_progress|
+            options[:in_progress] = true
+          end
+
+          opts.on('-c', '--completed') do |completed|
+            options[:completed] = true
+          end
+
+          opts.on('-d', '--defined') do |defined|
+            options[:defined] = true
+          end
+
+          opts.on('-o OWNER', '--owner') do |owner|
+            options[:owner] = owner
+          end
+        end,
+
+        'help' => OptionParser.new
+      }
+
+      global.order! @argv
 
       command = @argv.shift
+      commands[command].order! @argv if commands.has_key? command
 
       case command
       when 'cat'
