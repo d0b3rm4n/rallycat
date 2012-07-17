@@ -4,7 +4,6 @@
 * add update behavior for defects
 * add sub-command support (so we can use -p for in-progress)
 * give user friendly error messages
-  * when you don't pass in a task
   * when task does not exist
   * when owner cannot be found
 * update help
