@@ -3,8 +3,6 @@
 * add update behavior for stories
 * add update behavior for defects
 * add sub-command support (so we can use -p for in-progress)
-* give user friendly error messages
-  * when task does not exist
 * update help
 * make "help" default output
 * Slow as balls? Make nice wait messages
