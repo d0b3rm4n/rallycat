@@ -1,10 +1,7 @@
 # Rallycat TODO
 
 * Slow as balls? Make nice wait messages
-* Reconcile USER vs username (cli arg vs config attribute)
-* Add help
 * Add man page
-* Integration specs
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

@@ -5,17 +5,9 @@ describe 'Rallycat' do
   context 'cat' do
 
     it 'fetches, parses and outputs the rally story requested by the user' do
-      auth_responder = lambda do |env|
-        # 'https://rally1.rallydev.com/slm/webservice/current/user'
-        [200, {}, ['<foo>bar</foo>']]
-      end
-
       sout = StringIO.new
-      cli  = nil
 
-      Artifice.activate_with auth_responder do
-        cli = Rallycat::CLI.new %w{ cat US4567 -u=foo.bar@rallycat.com -p=password'}, sout
-      end
+      cli = Rallycat::CLI.new %w{ cat US4567 -u foo.bar@rallycat.com -p password }, sout
 
       story_responder = RallyStoryResponder.new
 
@@ -41,6 +33,87 @@ describe 'Rallycat' do
 
       expected.should include("rallycat cat [STORY NUMBER]")
       expected.should include("Displays the user story")
+    end
+  end
+
+  context 'update' do
+
+    context 'task' do
+
+      it 'sets the state to in-progress' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -i TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        Artifice.activate_with task_responder do
+          cli.run
+        end
+
+        sout.rewind
+        sout.read.should include('Task (TA6666) was set to "In-Progress".')
+      end
+
+      it 'sets the state to defined' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -d TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        Artifice.activate_with task_responder do
+          cli.run
+        end
+
+        sout.rewind
+        sout.read.should include('Task (TA6666) was set to "Defined".')
+      end
+
+      it 'sets the state to completed' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -c TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        Artifice.activate_with task_responder do
+          cli.run
+        end
+
+        sout.rewind
+        sout.read.should include('Task (TA6666) was set to "Completed".')
+      end
+
+      it 'blocks the task' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -b TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        Artifice.activate_with task_responder do
+          cli.run
+        end
+
+        sout.rewind
+        sout.read.should include('Task (TA6666) was blocked.')
+      end
+
+      it 'assigns the owner of the task' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -o Freddy\ Fender TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        Artifice.activate_with task_responder do
+          cli.run
+        end
+
+        sout.rewind
+        sout.read.should include('Task (TA6666) was assigned to "Freddy Fender".')
+      end
     end
   end
 end

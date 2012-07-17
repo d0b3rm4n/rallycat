@@ -1,5 +1,6 @@
 require 'yaml'
 require 'rally_rest_api'
+require 'logger'
 
 module Rallycat
   class InvalidConfigError < StandardError; end
@@ -18,7 +19,9 @@ module Rallycat
         @api = RallyRestAPI.new \
          base_url: 'https://rally1.rallydev.com/slm',
          username: config.fetch('username'),
-         password: config.fetch('password')
+         password: config.fetch('password'),
+         logger: Logger.new(nil)
+
       rescue Rally::NotAuthenticatedError
         raise InvalidCredentialsError.new('Your Rally credentials are invalid.')
       end
