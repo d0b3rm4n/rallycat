@@ -93,7 +93,7 @@ describe Rallycat::Update do
   end
 
   it 'raises when the user could not be found' do
-    responder = RallyTaskUpdateResponder.new
+    responder = RallyNoResultsResponder.new
 
     Artifice.activate_with responder do
       task_num = "TA6666"

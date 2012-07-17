@@ -49,7 +49,11 @@ module Rallycat
 
         abort 'The "cat" command requires a story or defect number.' unless story_number
 
-        @stdout.puts Rallycat::Cat.new(api).story(story_number)
+        begin
+          @stdout.puts Rallycat::Cat.new(api).story(story_number)
+        rescue Rallycat::Cat::StoryNotFound => e
+          abort e.message
+        end
       when 'update'
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
