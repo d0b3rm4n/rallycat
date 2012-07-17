@@ -45,7 +45,7 @@ STORY
 
     responder = RallyStoryResponder.new
 
-    Artifice.activate_with responder.endpoint do
+    Artifice.activate_with responder do
       story_num = 'US7176'
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
@@ -75,7 +75,7 @@ STORY
 
     responder = RallyDefectResponder.new
 
-    Artifice.activate_with responder.endpoint do
+    Artifice.activate_with responder do
       story_num = 'DE1234'
       cat = Rallycat::Cat.new(@api)
       cat.story(story_num).should == expected
