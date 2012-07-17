@@ -18,6 +18,11 @@ module Rallycat
         opts.on('-p PASSWORD', '--password') do |password|
           options[:password] = password
         end
+
+        opts.on('-h', '--help') do
+          @stdout.puts Rallycat::Help.new
+          exit
+        end
       end
 
       commands = {

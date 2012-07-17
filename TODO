@@ -1,10 +1,8 @@
 # Rallycat TODO
 
-* add update behavior for stories
-* add update behavior for defects
-* add sub-command support (so we can use -p for in-progress)
-* update help
-* make "help" default output
+* update help (use option_parser help or custom help)
+* add update behavior for stories (maybe)
+* add update behavior for defects (maybe)
 * Slow as balls? Make nice wait messages
 * Add man page
 
