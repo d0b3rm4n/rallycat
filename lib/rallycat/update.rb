@@ -8,15 +8,7 @@ module Rallycat
     end
 
     def task(task_number, attributes)
-      results = @api.find(:task) do
-        equal :formatted_id, task_number
-      end
-
-      if results.total_result_count == 0
-        raise TaskNotFound, "Task (#{task_number}) does not exist."
-      end
-
-      task = results.first
+      task = find_task(task_number)
 
       if attributes[:state] && !attributes[:blocked]
         attributes[:blocked] = false
@@ -29,16 +21,9 @@ module Rallycat
       # 
       # We decided it would be easier for the user to enter 'John Smith'
       # instead of 'john.smith@foobar.com'.
-      if user_name = attributes[:owner]
-        user_results = @api.find(:user) do
-          equal :display_name, user_name
-        end
-
-        if user_results.total_result_count == 0
-          raise UserNotFound, "User (#{attributes[:owner]}) does not exist."
-        end
-
-        attributes[:owner] = user_results.first.login_name
+      if display_name = attributes[:owner]
+        login_name = find_user(display_name)
+        attributes[:owner] = login_name
       end
 
       task.update(attributes)
@@ -46,18 +31,55 @@ module Rallycat
       messages = []
 
       if attributes[:state]
-        messages << %{Task (#{task_number}) was set to "#{attributes[:state]}".}
+        messages << state_message(task_number, attributes[:state])
       end
 
       if attributes[:blocked]
-        messages << "Task (#{task_number}) was blocked."
+        messages << blocked_message(task_number)
       end
 
       if attributes[:owner]
-        messages << %{Task (#{task_number}) was assigned to "#{user_name}".}
+        messages << owner_message(task_number, display_name)
       end
 
       messages.join("\n")
+    end
+
+    private
+    def find_task(task_number)
+      results = @api.find(:task) do
+        equal :formatted_id, task_number
+      end
+
+      if results.total_result_count == 0
+        raise TaskNotFound, "Task (#{task_number}) does not exist."
+      end
+
+      results.first
+    end
+
+    def find_user(display_name)
+      user_results = @api.find(:user) do
+        equal :display_name, display_name
+      end
+
+      if user_results.total_result_count == 0
+        raise UserNotFound, "User (#{display_name}) does not exist."
+      end
+
+      user_results.first.login_name
+    end
+
+    def state_message(task_number, state)
+      %{Task (#{task_number}) was set to "#{state}".}
+    end
+
+    def blocked_message(task_number)
+      "Task (#{task_number}) was blocked."
+    end
+
+    def owner_message(task_number, owner)
+      %{Task (#{task_number}) was assigned to "#{owner}".}
     end
   end
 end
