@@ -82,7 +82,7 @@ class RallyTaskUpdateResponder
         XML
       ]]
     else
-      [200, {}, ['<else />']]
+      RallyNoResultsResponder.new.call(env)
     end
   end
 end

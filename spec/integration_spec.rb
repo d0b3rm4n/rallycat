@@ -30,6 +30,18 @@ describe 'Rallycat' do
         end
       }.should raise_error(SystemExit, 'The "cat" command requires a story or defect number.')
     end
+
+    it 'aborts when the story does not exist' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ cat US9999 -u foo.bar@rallycat.com -p password }, sout
+
+      lambda {
+        Artifice.activate_with RallyNoResultsResponder.new do
+          cli.run
+        end
+      }.should raise_error(SystemExit, 'Story (US9999) does not exist.')
+    end
   end
 
   context 'help' do
@@ -128,6 +140,20 @@ describe 'Rallycat' do
         sout.read.should include('Task (TA6666) was assigned to "Freddy Fender".')
       end
 
+      it 'aborts when the owner does not exist' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -o Norman\ Notreal TA6666 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyTaskUpdateResponder.new
+
+        lambda {
+          Artifice.activate_with task_responder do
+            cli.run
+          end
+        }.should raise_error(SystemExit, 'User (Norman Notreal) does not exist.')
+      end
+
       it 'aborts when a task number is not given' do
         sout = StringIO.new
 
@@ -140,6 +166,20 @@ describe 'Rallycat' do
             cli.run
           end
         }.should raise_error(SystemExit, 'The "update" command requires a task number.')
+      end
+
+      it 'aborts when a task does not exist' do
+        sout = StringIO.new
+
+        cli = Rallycat::CLI.new %w{ update -i TA9999 -u foo.bar@rallycat.com -p password }, sout
+
+        task_responder = RallyNoResultsResponder.new
+
+        lambda {
+          Artifice.activate_with task_responder do
+            cli.run
+          end
+        }.should raise_error(SystemExit, 'Task (TA9999) does not exist.')
       end
     end
   end

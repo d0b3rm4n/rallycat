@@ -129,5 +129,30 @@ STORY
     end
   end
 
+  it 'raises when the story does not exist' do
+    responder = lambda do |env|
+      [200, {}, [
+        <<-XML
+          <QueryResult rallyAPIMajor="1" rallyAPIMinor="17">
+          <Errors/>
+          <Warnings/>
+          <TotalResultCount>0</TotalResultCount>
+          <StartIndex>1</StartIndex>
+          <PageSize>20</PageSize>
+          <Results/>
+          </QueryResult>
+        XML
+      ]]
+    end
+
+    Artifice.activate_with responder do
+      story_num = "US9999"
+      cat = Rallycat::Cat.new(@api)
+
+      lambda {
+        cat.story(story_num)
+       }.should raise_error(Rallycat::Cat::StoryNotFound, 'Story (US9999) does not exist.')
+    end
+  end
 end
 

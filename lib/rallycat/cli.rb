@@ -51,7 +51,11 @@ module Rallycat
 
         abort 'The "cat" command requires a story or defect number.' unless story_number
 
-        @stdout.puts Rallycat::Cat.new(api).story(story_number)
+        begin
+          @stdout.puts Rallycat::Cat.new(api).story(story_number)
+        rescue Rallycat::Cat::StoryNotFound => e
+          abort e.message
+        end
       when 'update'
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
@@ -66,7 +70,11 @@ module Rallycat
         opts[:state]   = "Defined"       if options[:defined]
         opts[:owner]   = options[:owner] if options[:owner]
 
-        @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
+        begin
+          @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
+        rescue Rallycat::Update::UserNotFound, Rallycat::Update::TaskNotFound => e
+          abort e.message
+        end
       when 'help'
         # `puts` calls `to_s`
         @stdout.puts Rallycat::Help.new

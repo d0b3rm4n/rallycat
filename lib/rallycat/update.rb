@@ -1,5 +1,8 @@
 module Rallycat
   class Update
+    class UserNotFound < StandardError; end
+    class TaskNotFound < StandardError; end
+
     def initialize(api)
       @api = api
     end
@@ -7,6 +10,10 @@ module Rallycat
     def task(task_number, attributes)
       results = @api.find(:task) do
         equal :formatted_id, task_number
+      end
+
+      if results.total_result_count == 0
+        raise TaskNotFound, "Task (#{task_number}) does not exist."
       end
 
       task = results.first
@@ -26,6 +33,11 @@ module Rallycat
         user_results = @api.find(:user) do
           equal :display_name, user_name
         end
+
+        if user_results.total_result_count == 0
+          raise UserNotFound, "User (#{attributes[:owner]}) does not exist."
+        end
+
         attributes[:owner] = user_results.first.login_name
       end
 

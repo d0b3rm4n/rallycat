@@ -2,6 +2,7 @@ require 'nokogiri'
 
 module Rallycat
   class Cat
+    class StoryNotFound < StandardError; end
 
     def initialize(rally_api)
       @rally_api = rally_api
@@ -14,7 +15,9 @@ module Rallycat
         equal :formatted_id, story_number
       end
 
-      return "Story (#{ story_number }) does not exist." if results.total_result_count == 0
+      if results.total_result_count == 0
+        raise StoryNotFound, "Story (#{ story_number }) does not exist."
+      end
 
       consolidate_newlines parse_story(results.first)
     end
