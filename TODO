@@ -5,7 +5,6 @@
 * add sub-command support (so we can use -p for in-progress)
 * give user friendly error messages
   * when task does not exist
-  * when owner cannot be found
 * update help
 * make "help" default output
 * Slow as balls? Make nice wait messages
