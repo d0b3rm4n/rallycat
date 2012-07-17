@@ -12,7 +12,7 @@ describe Rallycat::CLI, '#run' do
 
   it 'should execute command' do
     sout = StringIO.new
-    cli  = Rallycat::CLI.new ['help'], sout
+    cli  = Rallycat::CLI.new ['foo'], sout
 
     cli.run
 

@@ -10,11 +10,11 @@ module Rallycat
     def run
       options = {}
       option_parser = OptionParser.new do |opts|
-        opts.on('-u USER') do |user|
+        opts.on('-u USERNAME', '--username') do |user|
           options[:user] = user
         end
 
-        opts.on('-p PASSWORD') do |password|
+        opts.on('-p PASSWORD', ) do |password|
           options[:password] = password
         end
       end
@@ -26,6 +26,9 @@ module Rallycat
         api = Rallycat::Connection.new(options[:user], options[:password]).api
 
         @stdout.puts Rallycat::Cat.new(api).story(@argv.shift)
+      when 'help'
+        # `puts` calls `to_s`
+        @stdout.puts Rallycat::Help.new
       else
         @stdout.puts 'only support for `cat` exists at the moment.'
       end

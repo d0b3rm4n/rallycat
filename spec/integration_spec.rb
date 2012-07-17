@@ -19,12 +19,28 @@ describe 'Rallycat' do
 
       story_responder = RallyStoryResponder.new
 
-      Artifice.activate_with story_responder.endpoint do
+      Artifice.activate_with story_responder do
         cli.run
       end
 
       sout.rewind
       sout.read.should include('# [US4567] - [Rework] Change link to button')
+    end
+  end
+
+  context 'help' do
+    it 'displays a help screen to the user' do
+      string_io = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ help }, string_io
+
+      cli.run
+
+      string_io.rewind
+      expected = string_io.read
+
+      expected.should include("rallycat cat [STORY NUMBER]")
+      expected.should include("Displays the user story")
     end
   end
 end
