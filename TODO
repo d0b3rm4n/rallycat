@@ -8,6 +8,13 @@
 * add update behavior for defects (maybe)
 * Slow as balls? Make nice wait messages
 * Add man page
+* Ordering of arguments matters? (rallycat update TA1234 -b silently fails)
+* Create .rallycatrc file on first run?
+* Listing stories
+  * Per iteration
+  * Per project (project configured in rc or passed in?)
+* AC-only story view
+* Marking task as complete should make to-do hours zero.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
