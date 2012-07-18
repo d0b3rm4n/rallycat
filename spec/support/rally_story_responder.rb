@@ -1,16 +1,6 @@
 require 'cgi'
 
-class RallyStoryResponder
-
-  attr_reader :requests
-
-  def initialize
-    @requests = []
-  end
-
-  def last_request
-    @requests.last
-  end
+class RallyStoryResponder < GenericResponder
 
   def call(env)
     @requests << request = Rack::Request.new(env)

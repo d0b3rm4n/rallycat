@@ -1,13 +1,4 @@
-class RallyNoResultsResponder
-  attr_reader :requests
-
-  def initialize
-    @requests = []
-  end
-
-  def last_request
-    @requests.last
-  end
+class RallyNoResultsResponder < GenericResponder
 
   def call(env)
     @requests << request = Rack::Request.new(env)

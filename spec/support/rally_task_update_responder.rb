@@ -1,14 +1,4 @@
-class RallyTaskUpdateResponder
-
-  attr_reader :requests
-
-  def initialize
-    @requests = []
-  end
-
-  def last_request
-    @requests.last
-  end
+class RallyTaskUpdateResponder < GenericResponder
 
   def call(env)
     @requests << request = Rack::Request.new(env)
