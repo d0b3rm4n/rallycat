@@ -1,6 +1,9 @@
 # Rallycat TODO
 
 * update help (use option_parser help or custom help)
+* todo time
+* set todo time
+* set notes on a task (-n overwrite, -N to append)
 * add update behavior for stories (maybe)
 * add update behavior for defects (maybe)
 * Slow as balls? Make nice wait messages
