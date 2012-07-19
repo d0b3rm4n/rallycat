@@ -7,7 +7,7 @@ describe 'Rallycat' do
     it 'fetches, parses and outputs the rally story requested by the user' do
       sout = StringIO.new
 
-      cli = Rallycat::CLI.new %w{ cat US4567 -u foo.bar@rallycat.com -p password }, sout
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password cat US4567 }, sout
 
       story_responder = RallyStoryResponder.new
 
@@ -68,7 +68,7 @@ describe 'Rallycat' do
       it 'sets the state to in-progress' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -p TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -p TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -83,7 +83,7 @@ describe 'Rallycat' do
       it 'sets the state to defined' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -d TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -d TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -98,7 +98,7 @@ describe 'Rallycat' do
       it 'sets the state to completed' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -c TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -c TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -113,7 +113,7 @@ describe 'Rallycat' do
       it 'blocks the task' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -b TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -b TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -128,7 +128,7 @@ describe 'Rallycat' do
       it 'assigns the owner of the task' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -o Freddy\ Fender TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -o Freddy\ Fender TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -143,7 +143,7 @@ describe 'Rallycat' do
       it 'aborts when the owner does not exist' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -o Norman\ Notreal TA6666 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -o Norman\ Notreal TA6666 }, sout
 
         task_responder = RallyTaskUpdateResponder.new
 
@@ -171,7 +171,7 @@ describe 'Rallycat' do
       it 'aborts when a task does not exist' do
         sout = StringIO.new
 
-        cli = Rallycat::CLI.new %w{ update -i TA9999 -u foo.bar@rallycat.com -p password }, sout
+        cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -i TA9999 }, sout
 
         task_responder = RallyNoResultsResponder.new
 

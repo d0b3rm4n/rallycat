@@ -2,21 +2,26 @@ require 'optparse'
 
 module Rallycat
   class CLI
+    attr_reader :options
+
     def initialize(argv, stdout=STDOUT)
       @argv   = argv
       @stdout = stdout
+
+      parse_global_options!
+      parse_command_options!
     end
 
-    def run
-      options = {}
+    def parse_global_options!
+      @options ||= {}
 
       global = OptionParser.new do |opts|
-        opts.on('-u USERNAME', '--username') do |user|
-          options[:user] = user
+        opts.on('-u USERNAME', '--username') do |username|
+          @options[:username] = username
         end
 
         opts.on('-p PASSWORD', '--password') do |password|
-          options[:password] = password
+          @options[:password] = password
         end
 
         opts.on('-h', '--help') do
@@ -25,6 +30,12 @@ module Rallycat
         end
       end
 
+      global.order! @argv
+    end
+
+    def parse_command_options!
+      @options ||= {}
+
       commands = {
         'cat' => OptionParser.new,
 
@@ -32,37 +43,37 @@ module Rallycat
           opts.banner = 'Usage: rallycat update <story number> [options]'
 
           opts.on('-b', '--blocked') do |blocked|
-            options[:blocked] = true
+            @options[:blocked] = true
           end
 
           opts.on('-p', '--in-progress') do |in_progress|
-            options[:in_progress] = true
+            @options[:in_progress] = true
           end
 
           opts.on('-c', '--completed') do |completed|
-            options[:completed] = true
+            @options[:completed] = true
           end
 
           opts.on('-d', '--defined') do |defined|
-            options[:defined] = true
+            @options[:defined] = true
           end
 
           opts.on('-o OWNER', '--owner') do |owner|
-            options[:owner] = owner
+            @options[:owner] = owner
           end
         end,
 
         'help' => OptionParser.new
       }
 
-      global.order! @argv
+      @command = @argv.shift
+      commands[@command].parse! @argv if commands.has_key? @command
+    end
 
-      command = @argv.shift
-      commands[command].order! @argv if commands.has_key? command
-
-      case command
+    def run
+      case @command
       when 'cat'
-        api = Rallycat::Connection.new(options[:user], options[:password]).api
+        api = Rallycat::Connection.new(options[:username], options[:password]).api
 
         story_number = @argv.shift
 
@@ -74,7 +85,7 @@ module Rallycat
           abort e.message
         end
       when 'update'
-        api = Rallycat::Connection.new(options[:user], options[:password]).api
+        api = Rallycat::Connection.new(options[:username], options[:password]).api
 
         task_number = @argv.shift
 
@@ -96,7 +107,7 @@ module Rallycat
         # `puts` calls `to_s`
         @stdout.puts Rallycat::Help.new
       else
-        @stdout.puts "'#{command}' is not a supported command. See 'rallycat help'."
+        @stdout.puts "'#{@command}' is not a supported command. See 'rallycat help'."
       end
     end
   end
