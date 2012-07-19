@@ -53,6 +53,24 @@ describe Rallycat::Update do
       body.should include('<State>In-Progress</State>')
     end
 
+    it 'sets the todo hours to zero when completing the task' do
+      responder = RallyTaskUpdateResponder.new
+
+      Artifice.activate_with responder do
+        task_num = "TA6666"
+        update = Rallycat::Update.new(@api)
+        message = update.task(task_num, state: "Completed")
+      end
+
+      post_request = responder.requests[2] # this is the request that actually updates the task
+      post_request.should be_post
+      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+
+      body =  post_request.body.tap(&:rewind).read
+      body.should include('<State>Completed</State>')
+      body.should include('<ToDo>0.0</ToDo>')
+    end
+
 
     it 'blocks the task' do
       responder = RallyTaskUpdateResponder.new

@@ -29,6 +29,12 @@ module Rallycat
         attributes[:owner] = login_name
       end
 
+      # If the task is marked as 'Complete', we should remove the remaining
+      # hours.
+      if attributes[:state] == "Completed"
+        attributes[:to_do] = 0.0
+      end
+
       task.update(attributes)
 
       messages = []
