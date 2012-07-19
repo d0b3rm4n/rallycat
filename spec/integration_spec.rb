@@ -57,7 +57,7 @@ describe 'Rallycat' do
       expected = string_io.read
 
       expected.should include("rallycat cat <story number>")
-      expected.should include("Displays the user story")
+      expected.should include("Displays a user story or defect")
     end
   end
 

@@ -16,15 +16,15 @@ module Rallycat
       @options ||= {}
 
       global = OptionParser.new do |opts|
-        opts.on('-u USERNAME', '--username') do |username|
+        opts.on('-u USERNAME', '--username', 'Your Rally username') do |username|
           @options[:username] = username
         end
 
-        opts.on('-p PASSWORD', '--password') do |password|
+        opts.on('-p PASSWORD', '--password', 'Your Rally password') do |password|
           @options[:password] = password
         end
 
-        opts.on('-h', '--help') do
+        opts.on('-h', '--help', 'Show this message') do
           @stdout.puts Rallycat::Help.new
           exit
         end
@@ -37,33 +37,37 @@ module Rallycat
       @options ||= {}
 
       commands = {
-        'cat' => OptionParser.new,
+        'cat' => OptionParser.new do |opts|
+          opts.banner = 'Usage: rallycat story <story number>'
+        end,
 
         'update' => OptionParser.new do |opts|
-          opts.banner = 'Usage: rallycat update <story number> [options]'
+          opts.banner = 'Usage: rallycat update <task number> [options]'
 
-          opts.on('-b', '--blocked') do |blocked|
+          opts.on('-b', '--blocked', 'Block the current state of a task') do |blocked|
             @options[:blocked] = true
           end
 
-          opts.on('-p', '--in-progress') do |in_progress|
+          opts.on('-p', '--in-progress', 'Set the state of a task to "In-Progress"') do |in_progress|
             @options[:in_progress] = true
           end
 
-          opts.on('-c', '--completed') do |completed|
+          opts.on('-c', '--completed', 'Set the state of a task to "Completed"') do |completed|
             @options[:completed] = true
           end
 
-          opts.on('-d', '--defined') do |defined|
+          opts.on('-d', '--defined', 'Set the state of a task to "Defined"') do |defined|
             @options[:defined] = true
           end
 
-          opts.on('-o OWNER', '--owner') do |owner|
+          opts.on('-o OWNER', '--owner', 'Set the owner of a task') do |owner|
             @options[:owner] = owner
           end
         end,
 
-        'help' => OptionParser.new
+        'help' => OptionParser.new do |opts|
+          opts.banner = 'Usage: rallycat help'
+        end
       }
 
       @command = @argv.shift

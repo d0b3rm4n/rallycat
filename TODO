@@ -1,6 +1,5 @@
 # Rallycat TODO
 
-* update help (use option_parser help or custom help)
 * todo time
 * set todo time
 * set notes on a task (-n overwrite, -N to append)
