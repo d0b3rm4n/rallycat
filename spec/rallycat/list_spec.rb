@@ -12,7 +12,8 @@ require 'spec_helper'
 
 
 describe Rallycat::List, '#iterations' do
-  it 'returns last five iterations for the configured project' do
+
+  before do
     responder = lambda do |env|
       # 'https://rally1.rallydev.com/slm/webservice/current/user'
       [200, {}, ['<foo />']]
@@ -21,7 +22,9 @@ describe Rallycat::List, '#iterations' do
     Artifice.activate_with responder do
       @api = Rallycat::Connection.new('foo.bar@rallycat.com', 'password').api
     end
+  end
 
+  it 'returns last five iterations for the configured project' do
     expected = <<-LIST
 # 5 Most recent iterations for "SuperBad"
 
@@ -40,6 +43,34 @@ describe Rallycat::List, '#iterations' do
     end
   end
 
-  it 'raises when project name is empty'
-  it 'raises when project name is nil'
+  it 'raises when project name is empty' do
+    lambda {
+      list = Rallycat::List.new(@api)
+      list.iterations('').should == expected
+    }.should raise_error(ArgumentError, 'Project name is required.')
+  end
+
+  it 'raises when project name is nil' do
+    lambda {
+      list = Rallycat::List.new(@api)
+      list.iterations(nil).should == expected
+    }.should raise_error(ArgumentError, 'Project name is required.')
+  end
+
+  it 'raises when project cannot be found' do
+    Artifice.activate_with RallyNoResultsResponder.new do
+      lambda {
+        list = Rallycat::List.new(@api)
+        list.iterations('WebFarts').should == expected
+      }.should raise_error(Rallycat::List::ProjectNotFound, 'Project (WebFarts) does not exist.')
+    end
+  end
+
+  it 'user friendly message when project has no iterations' do
+    Artifice.activate_with RallyIterationsResponder.new do
+      project = 'SuperAwful'
+      list = Rallycat::List.new(@api)
+      list.iterations(project).should == 'No iterations could be found for project SuperAwful.'
+    end
+  end
 end
