@@ -10,6 +10,7 @@ class GenericResponder
   end
 
   def call(env)
+    # does not record the requests
     [200, {}, ['']]
   end
 end
