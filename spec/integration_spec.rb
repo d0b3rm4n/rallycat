@@ -186,14 +186,6 @@ describe 'Rallycat' do
 
   context 'list' do
 
-    #
-    # rallycat list                       # by default gives last 5 iterations for your configured project
-    # rallycat list -p <project name>
-    # rallycat list -i <iteration name>   # list all stories for the iteration (ex. [US123] The story name)
-    # rallycat list -p <project name> -i <iteration name>
-    # rallycat list -s <search phrase>    # do a contains lookup for an iteration
-    #
-
     it 'outputs the last 5 iterations for the users configured project' do
       sout = StringIO.new
 
@@ -254,6 +246,30 @@ describe 'Rallycat' do
 
       sout.rewind
       sout.read.should include('# Stories for iteration "25 (2012-05-01 to 2012-05-05)" - "SuperBad"')
+    end
+
+    it 'aborts when project is not found' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list -p WebFarts -i 25\ (2012-05-01\ to\ 2012-05-05) }, sout
+
+      lambda {
+        Artifice.activate_with RallyStoriesResponder.new do
+          cli.run
+        end
+      }.should raise_error(SystemExit, 'Project (WebFarts) does not exist.')
+    end
+
+    it 'aborts when iteration is not found' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list -p SuperBad -i Sprint\ 0 }, sout
+
+      lambda {
+        Artifice.activate_with RallyStoriesResponder.new do
+          cli.run
+        end
+      }.should raise_error(SystemExit, 'Iteration (Sprint 0) does not exist.')
     end
   end
 end

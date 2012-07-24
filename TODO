@@ -13,11 +13,12 @@
   * Per project (project configured in rc or passed in?)
 * AC-only story view
 * consolidate spec styles
-* add an auth responder and replace copied lambda throughout specs
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ## Ideas
+
+rallycat list -s <search phrase>    # do a contains lookup for an iteration
 
 Keep a log of last (n) stories typed into `cat` so the default action for
   `rallycat cat` will list the last (n) stories for the user.

@@ -49,10 +49,14 @@ module Rallycat
         api = Rallycat::Connection.new(options[:username], options[:password]).api
         project = options[:project]
 
-        if options[:iteration]
-          @stdout.puts Rallycat::List.new(api).stories(project, options[:iteration])
-        else
-          @stdout.puts Rallycat::List.new(api).iterations(project)
+        begin
+          if options[:iteration]
+            @stdout.puts Rallycat::List.new(api).stories(project, options[:iteration])
+          else
+            @stdout.puts Rallycat::List.new(api).iterations(project)
+          end
+        rescue Rallycat::List::ProjectNotFound, Rallycat::List::IterationNotFound => e
+          abort e.message
         end
       when 'help'
         # `puts` calls `to_s`
