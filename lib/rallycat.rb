@@ -1,5 +1,6 @@
 require 'rallycat/cat'
 require 'rallycat/cli'
+require 'rallycat/config'
 require 'rallycat/connection'
 require 'rallycat/help'
 require 'rallycat/html_to_text_converter'

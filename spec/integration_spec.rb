@@ -183,4 +183,77 @@ describe 'Rallycat' do
       end
     end
   end
+
+  context 'list' do
+
+    #
+    # rallycat list                       # by default gives last 5 iterations for your configured project
+    # rallycat list -p <project name>
+    # rallycat list -i <iteration name>   # list all stories for the iteration (ex. [US123] The story name)
+    # rallycat list -p <project name> -i <iteration name>
+    # rallycat list -s <search phrase>    # do a contains lookup for an iteration
+    #
+
+    it 'outputs the last 5 iterations for the users configured project' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list }, sout
+
+      Artifice.activate_with RallyIterationsResponder.new do
+        rc_file = File.expand_path("~/.rallycatrc")
+        YAML.stub(:load_file).with(rc_file).and_return({
+          'project' => 'SuperBad'
+        })
+
+        cli.run
+      end
+
+      sout.rewind
+      sout.read.should include('# 5 Most recent iterations for "SuperBad"')
+    end
+
+    it 'outputs the last 5 iterations for the project provided' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list -p SuperBad }, sout
+
+      Artifice.activate_with RallyIterationsResponder.new do
+        cli.run
+      end
+
+      sout.rewind
+      sout.read.should include('# 5 Most recent iterations for "SuperBad"')
+    end
+
+    it 'outputs the stories for an iteration constrained by the configured project' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list -i 25\ (2012-05-01\ to\ 2012-05-05) }, sout
+
+      Artifice.activate_with RallyStoriesResponder.new do
+        rc_file = File.expand_path("~/.rallycatrc")
+        YAML.stub(:load_file).with(rc_file).and_return({
+          'project' => 'SuperBad'
+        })
+
+        cli.run
+      end
+
+      sout.rewind
+      sout.read.should include('# Stories for iteration "25 (2012-05-01 to 2012-05-05)" - "SuperBad"')
+    end
+
+    it 'outputs the stories for an iteration constrained by the project provided' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list -p SuperBad -i 25\ (2012-05-01\ to\ 2012-05-05) }, sout
+
+      Artifice.activate_with RallyStoriesResponder.new do
+        cli.run
+      end
+
+      sout.rewind
+      sout.read.should include('# Stories for iteration "25 (2012-05-01 to 2012-05-05)" - "SuperBad"')
+    end
+  end
 end

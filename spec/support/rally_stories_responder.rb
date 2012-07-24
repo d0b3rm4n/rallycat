@@ -80,7 +80,11 @@ class RallyStoriesResponder < GenericResponder
           </QueryResult>
         XML
       ]]
+    when 'https://rally1.rallydev.com/slm/webservice/1.17/iteration/7890'
+      # does nothing WTF(but will make tests fail if not here)???
     when 'https://rally1.rallydev.com/slm/webservice/current/HierarchicalRequirement?query=%28Iteration+%3D+https%3A%2F%2Frally1.rallydev.com%2Fslm%2Fwebservice%2F1.17%2Fiteration%2F7890%29&project=https%3A%2F%2Frally1.rallydev.com%2Fslm%2Fwebservice%2F1.17%2Fproject%2F777555&pagesize=100&fetch=true'
+      RallyNoResultsResponder.new.call(env)
+    else
       RallyNoResultsResponder.new.call(env)
     end
   end

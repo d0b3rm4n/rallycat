@@ -45,6 +45,15 @@ module Rallycat
         rescue Rallycat::Update::UserNotFound, Rallycat::Update::TaskNotFound => e
           abort e.message
         end
+      when 'list'
+        api = Rallycat::Connection.new(options[:username], options[:password]).api
+        project = options[:project]
+
+        if options[:iteration]
+          @stdout.puts Rallycat::List.new(api).stories(project, options[:iteration])
+        else
+          @stdout.puts Rallycat::List.new(api).iterations(project)
+        end
       when 'help'
         # `puts` calls `to_s`
         @stdout.puts Rallycat::Help.new
@@ -105,6 +114,18 @@ module Rallycat
 
           opts.on('-o OWNER', '--owner', 'Set the owner of a task') do |owner|
             @options[:owner] = owner
+          end
+        end,
+
+        'list' => OptionParser.new do |opts|
+          opts.banner = 'Usage: rallycat list [options]'
+
+          opts.on('-p [PROJECT]', '--project', 'The project whose iterations you want to list') do |project|
+            @options[:project] = project
+          end
+
+          opts.on('-i ITERATION', '--iteration', 'The iteration whose stories you want to list') do |iteration|
+            @options[:iteration] = iteration
           end
         end,
 

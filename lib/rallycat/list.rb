@@ -5,9 +5,12 @@ module Rallycat
 
     def initialize(api)
       @api = api
+      @config = Config.new
     end
 
     def iterations(project_name)
+      project_name ||= @config['project']
+
       validate_arg project_name, 'Project name is required.'
 
       project = find_project(project_name)
@@ -33,11 +36,13 @@ module Rallycat
     end
 
     def stories(project_name, iteration_name)
+      project_name ||= @config['project']
+
       validate_arg project_name,   'Project name is required.'
       validate_arg iteration_name, 'Iteration name is required.'
 
       project   = find_project(project_name)
-      iteration = find_iteration(iteration_name)
+      iteration = find_iteration(iteration_name, project)
 
       stories = @api.find(:hierarchical_requirement, {
         project: project,
@@ -73,7 +78,7 @@ module Rallycat
       project
     end
 
-    def find_iteration(iteration_name)
+    def find_iteration(iteration_name, project)
       iteration = @api.find(:iteration, :project => project) {
         equal(:name, iteration_name)
       }.first

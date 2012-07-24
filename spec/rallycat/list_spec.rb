@@ -1,12 +1,5 @@
 require 'spec_helper'
 
-#
-# rallycat list                       # by default gives last 5 iterations for your configured project
-# rallycat list -i <iteration name>   # list all stories for the iteration (ex. [US123] The story name)
-# rallycat list -p <project name> -i <iteration name>
-# rallycat list -s <search phrase>    # do a contains lookup for an iteration
-#
-
 describe Rallycat::List, '#iterations' do
 
   before do
@@ -15,7 +8,7 @@ describe Rallycat::List, '#iterations' do
     end
   end
 
-  it 'returns last five iterations for the configured project' do
+  it 'returns last five iterations for the project provided' do
     expected = <<-LIST
 # 5 Most recent iterations for "SuperBad"
 
@@ -34,6 +27,28 @@ describe Rallycat::List, '#iterations' do
     end
   end
 
+  it 'returns last five iterations for the configured project in .rallycatrc' do
+    expected = <<-LIST
+# 5 Most recent iterations for "SuperBad"
+
+25 (2012-05-01 to 2012-05-05)
+24 (2012-04-01 to 2012-04-05)
+23 (2012-03-01 to 2012-03-05)
+22 (2012-02-01 to 2012-02-05)
+21 (2012-01-01 to 2012-01-05)
+
+    LIST
+
+    Artifice.activate_with RallyIterationsResponder.new do
+      rc_file = File.expand_path("~/.rallycatrc")
+      YAML.stub(:load_file).with(rc_file).and_return({
+        'project' => 'SuperBad'
+      })
+      list = Rallycat::List.new(@api)
+      list.iterations(nil).should == expected
+    end
+  end
+
   it 'raises when project name is empty' do
     lambda {
       list = Rallycat::List.new(@api)
@@ -43,6 +58,9 @@ describe Rallycat::List, '#iterations' do
 
   it 'raises when project name is nil' do
     lambda {
+      rc_file = File.expand_path("~/.rallycatrc")
+      YAML.stub(:load_file).with(rc_file).and_return({})
+
       list = Rallycat::List.new(@api)
       list.iterations(nil).should == expected
     }.should raise_error(ArgumentError, 'Project name is required.')
@@ -100,6 +118,9 @@ describe Rallycat::List, '#stories' do
 
   it 'raises when project name is nil' do
     lambda {
+      rc_file = File.expand_path("~/.rallycatrc")
+      YAML.stub(:load_file).with(rc_file).and_return({})
+
       list = Rallycat::List.new(@api)
       list.stories(nil, '25 (2012-05-01 to 2012-05-05)').should == expected
     }.should raise_error(ArgumentError, 'Project name is required.')

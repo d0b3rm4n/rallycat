@@ -69,6 +69,8 @@ class RallyIterationsResponder < GenericResponder
       ]]
     when 'https://rally1.rallydev.com/slm/webservice/current/Iteration?query=%28ObjectID+%3E+0%29&project=https%3A%2F%2Frally1.rallydev.com%2Fslm%2Fwebservice%2F1.36%2Fproject%2F888444&order=Startdate+desc&pagesize=10'
       RallyNoResultsResponder.new.call(env)
+    else
+      RallyNoResultsResponder.new.call(env)
     end
   end
 end
