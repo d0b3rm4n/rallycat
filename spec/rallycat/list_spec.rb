@@ -71,7 +71,7 @@ describe Rallycat::List, '#iterations' do
       lambda {
         list = Rallycat::List.new(@api)
         list.iterations('WebFarts').should == expected
-      }.should raise_error(Rallycat::List::ProjectNotFound, 'Project (WebFarts) does not exist.')
+      }.should raise_error(Rallycat::ProjectNotFound, 'Project (WebFarts) does not exist.')
     end
   end
 
@@ -145,7 +145,7 @@ describe Rallycat::List, '#stories' do
       lambda {
         list = Rallycat::List.new(@api)
         list.stories('WebFarts', '25 (2012-05-01 to 2012-05-05)')
-      }.should raise_error(Rallycat::List::ProjectNotFound, 'Project (WebFarts) does not exist.')
+      }.should raise_error(Rallycat::ProjectNotFound, 'Project (WebFarts) does not exist.')
     end
   end
 
@@ -154,7 +154,7 @@ describe Rallycat::List, '#stories' do
       lambda {
         list = Rallycat::List.new(@api)
         list.stories('SuperBad', 'Sprint 0')
-      }.should raise_error(Rallycat::List::IterationNotFound, 'Iteration (Sprint 0) does not exist.')
+      }.should raise_error(Rallycat::IterationNotFound, 'Iteration (Sprint 0) does not exist.')
     end
   end
 

@@ -1,7 +1,5 @@
 module Rallycat
   class List
-    class ProjectNotFound < StandardError; end
-    class IterationNotFound < StandardError; end
 
     def initialize(api)
       @api = api

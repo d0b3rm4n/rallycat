@@ -2,9 +2,7 @@ require 'yaml'
 require 'rally_rest_api'
 require 'logger'
 
-module Rallycat
-  class InvalidCredentialsError < StandardError; end
-
+module Rallycat 
   class Connection
     attr_reader :api
 

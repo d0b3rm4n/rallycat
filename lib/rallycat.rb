@@ -9,5 +9,12 @@ require 'rallycat/update'
 require 'rallycat/version'
 
 module Rallycat
-  # Your code goes here...
+  class RallycatError           < StandardError; end
+  class StoryNotFound           < RallycatError; end
+  class InvalidConfigError      < RallycatError; end
+  class InvalidCredentialsError < RallycatError; end
+  class ProjectNotFound         < RallycatError; end
+  class IterationNotFound       < RallycatError; end
+  class UserNotFound            < RallycatError; end
+  class TaskNotFound            < RallycatError; end
 end

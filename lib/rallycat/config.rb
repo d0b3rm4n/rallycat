@@ -1,6 +1,4 @@
 module Rallycat
-  class InvalidConfigError < StandardError; end
-
   class Config
     def initialize
       begin

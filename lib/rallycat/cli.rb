@@ -21,11 +21,7 @@ module Rallycat
 
         abort 'The "cat" command requires a story or defect number.' unless story_number
 
-        begin
-          @stdout.puts Rallycat::Cat.new(api).story(story_number)
-        rescue Rallycat::Cat::StoryNotFound => e
-          abort e.message
-        end
+        @stdout.puts Rallycat::Cat.new(api).story(story_number)
       when 'update'
         api = Rallycat::Connection.new(options[:username], options[:password]).api
 
@@ -40,23 +36,15 @@ module Rallycat
         opts[:state]   = "Defined"       if options[:defined]
         opts[:owner]   = options[:owner] if options[:owner]
 
-        begin
-          @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
-        rescue Rallycat::Update::UserNotFound, Rallycat::Update::TaskNotFound => e
-          abort e.message
-        end
+        @stdout.puts Rallycat::Update.new(api).task(task_number, opts)
       when 'list'
         api = Rallycat::Connection.new(options[:username], options[:password]).api
         project = options[:project]
 
-        begin
-          if options[:iteration]
-            @stdout.puts Rallycat::List.new(api).stories(project, options[:iteration])
-          else
-            @stdout.puts Rallycat::List.new(api).iterations(project)
-          end
-        rescue Rallycat::List::ProjectNotFound, Rallycat::List::IterationNotFound => e
-          abort e.message
+        if options[:iteration]
+          @stdout.puts Rallycat::List.new(api).stories(project, options[:iteration])
+        else
+          @stdout.puts Rallycat::List.new(api).iterations(project)
         end
       when 'help'
         # `puts` calls `to_s`
@@ -64,6 +52,9 @@ module Rallycat
       else
         @stdout.puts "'#{@command}' is not a supported command. See 'rallycat help'."
       end
+
+    rescue Rallycat::RallycatError => e
+      abort e.message
     end
 
     private

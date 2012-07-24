@@ -2,7 +2,6 @@ require 'nokogiri'
 
 module Rallycat
   class Cat
-    class StoryNotFound < StandardError; end
 
     def initialize(rally_api)
       @rally_api = rally_api

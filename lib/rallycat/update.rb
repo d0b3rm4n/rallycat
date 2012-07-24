@@ -1,7 +1,5 @@
 module Rallycat
   class Update
-    class UserNotFound < StandardError; end
-    class TaskNotFound < StandardError; end
 
     def initialize(api)
       @api = api

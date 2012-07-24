@@ -148,7 +148,7 @@ STORY
 
       lambda {
         cat.story(story_num)
-       }.should raise_error(Rallycat::Cat::StoryNotFound, 'Story (US9999) does not exist.')
+       }.should raise_error(Rallycat::StoryNotFound, 'Story (US9999) does not exist.')
     end
   end
 end
