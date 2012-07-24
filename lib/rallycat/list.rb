@@ -8,15 +8,9 @@ module Rallycat
     end
 
     def iterations(project_name)
-      if project_name.nil? || project_name.empty?
-        raise ArgumentError, 'Project name is required.'
-      end
+      validate_arg project_name, 'Project name is required.'
 
-      project = @api.find(:project) { equal(:name, project_name) }.first
-
-      unless project
-        raise ProjectNotFound, "Project (#{project_name}) does not exist."
-      end
+      project = find_project(project_name)
 
       iterations = @api.find_all(:iteration, {
         project: project,
@@ -39,27 +33,11 @@ module Rallycat
     end
 
     def stories(project_name, iteration_name)
-      if project_name.nil? || project_name.empty?
-        raise ArgumentError, 'Project name is required.'
-      end
+      validate_arg project_name,   'Project name is required.'
+      validate_arg iteration_name, 'Iteration name is required.'
 
-      if iteration_name.nil? || iteration_name.empty?
-        raise ArgumentError, 'Iteration name is required.'
-      end
-
-      project = @api.find(:project) { equal(:name, project_name) }.first
-
-      unless project
-        raise ProjectNotFound, "Project (#{project_name}) does not exist."
-      end
-
-      iteration = @api.find(:iteration, :project => project) {
-        equal(:name, iteration_name)
-      }.first
-
-      unless iteration
-        raise IterationNotFound, "Iteration (#{iteration_name}) does not exist."
-      end
+      project   = find_project(project_name)
+      iteration = find_iteration(iteration_name)
 
       stories = @api.find(:hierarchical_requirement, {
         project: project,
@@ -79,6 +57,30 @@ module Rallycat
       end
 
       list += "\n"
+    end
+
+    private
+
+    def validate_arg(val, message)
+      raise ArgumentError, message if val.nil? || val.empty?
+    end
+
+    def find_project(project_name)
+      project = @api.find(:project) { equal(:name, project_name) }.first
+
+      raise ProjectNotFound, "Project (#{project_name}) does not exist." unless project
+
+      project
+    end
+
+    def find_iteration(iteration_name)
+      iteration = @api.find(:iteration, :project => project) {
+        equal(:name, iteration_name)
+      }.first
+
+      raise IterationNotFound, "Iteration (#{iteration_name}) does not exist." unless iteration
+
+      iteration
     end
   end
 end
