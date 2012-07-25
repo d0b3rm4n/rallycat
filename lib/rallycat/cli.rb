@@ -53,7 +53,7 @@ module Rallycat
         @stdout.puts "'#{@command}' is not a supported command. See 'rallycat help'."
       end
 
-    rescue Rallycat::RallycatError => e
+    rescue Rallycat::RallycatError, ArgumentError => e
       abort e.message
     end
 

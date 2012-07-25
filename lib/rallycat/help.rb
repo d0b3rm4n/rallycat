@@ -11,10 +11,12 @@ work.
 Configuration:
   Configuration is available through a ~/.rallycatrc file formatted as YAML.
   The file should have two keys: `username` and `password` for authenticating
-  with the Rally API. Example:
+  with the Rally API. An additional project attribute can be added to make some
+  commands easiser to use. Example:
 
     username: email@host.com
     password: pass1234
+    project:  SuperBad
 
   Additionally, the `-u [USERNAME]` and `-p [PASSWORD]` flags may be provided
   at runtime and will take higher precedence than the configuration file.
@@ -30,6 +32,9 @@ Commands:
     [--blocked | -b] [--in-progress | -p]
     [--completed | -c] [--defined | -d]
     [--owner | -o <fullname>]
+  rallycat list                           # List iterations and stories
+    [--project | -p <project name>]
+    [--iteration | -i <iteration name>]
   rallycat help                           # Displays this help text
 
 

@@ -271,5 +271,20 @@ describe 'Rallycat' do
         end
       }.should raise_error(SystemExit, 'Iteration (Sprint 0) does not exist.')
     end
+
+    it 'aborts when project is not configured or provided' do
+      sout = StringIO.new
+
+      cli = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password list }, sout
+
+      lambda {
+        Artifice.activate_with RallyStoriesResponder.new do
+          rc_file = File.expand_path("~/.rallycatrc")
+          YAML.stub(:load_file).with(rc_file).and_return({ })
+
+          cli.run
+        end
+      }.should raise_error(SystemExit, 'Project name is required.')
+    end
   end
 end
