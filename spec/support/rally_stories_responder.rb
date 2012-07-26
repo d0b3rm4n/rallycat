@@ -57,7 +57,16 @@ class RallyStoriesResponder < GenericResponder
                 <Name>This is story number two</Name>
                 <ScheduleState>In-Progress</ScheduleState>
               </Object>
-              <Object type="HierarchicalRequirement">
+            </Results>
+          </QueryResult>
+        XML
+      ]]
+    when 'https://rally1.rallydev.com/slm/webservice/current/Defect?query=%28Iteration+%3D+%29&project=https%3A%2F%2Frally1.rallydev.com%2Fslm%2Fwebservice%2F1.17%2Fproject%2F777555&pagesize=100&fetch=true'
+      [200, {}, [
+        <<-XML
+          <QueryResult>
+            <Results>
+              <Object type="Defect">
                 <FormattedID>DE789</FormattedID>
                 <Name>This is defect number one</Name>
                 <ScheduleState>Defined</ScheduleState>

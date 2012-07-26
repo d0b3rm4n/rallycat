@@ -48,6 +48,12 @@ module Rallycat
         fetch: true
       }) { equal :iteration, iteration }.results
 
+      stories += @api.find(:defect, {
+        project: project,
+        pagesize: 100,
+        fetch: true
+      }) { equal :iteration, iteration }.results
+
       if stories.count == 0
         return %{No stories could be found for iteration "#{iteration_name}".}
       end
