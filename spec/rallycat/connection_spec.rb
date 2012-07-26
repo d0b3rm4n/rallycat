@@ -23,7 +23,7 @@ describe Rallycat::Connection do
           @connection = Rallycat::Connection.new
         end
       }.should raise_error Rallycat::InvalidConfigError,
-        'Your rallycat config file is missing or invalid. Please RTFM.'
+        "Your rallycat config file is missing or invalid. See 'rallycat help'."
     end
 
     it "raises when the credentials are invalid" do

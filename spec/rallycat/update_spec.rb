@@ -119,7 +119,7 @@ describe Rallycat::Update do
 
       lambda {
         update.task(task_num, state: 'Completed', owner: 'Norman Notreal')
-      }.should raise_error(Rallycat::Update::UserNotFound, 'User (Norman Notreal) does not exist.')
+      }.should raise_error(Rallycat::UserNotFound, 'User (Norman Notreal) does not exist.')
     end
   end
 
@@ -132,7 +132,7 @@ describe Rallycat::Update do
 
       lambda {
         update.task(task_num, state: 'Completed')
-      }.should raise_error(Rallycat::Update::TaskNotFound, 'Task (TA6666) does not exist.')
+      }.should raise_error(Rallycat::TaskNotFound, 'Task (TA6666) does not exist.')
     end
 
   end
