@@ -8,17 +8,17 @@
 * Slow as balls? Make nice wait messages
 * Add man page
 * Create .rallycatrc file on first run?
-* Listing stories
-  * Per iteration
-  * Per project (project configured in rc or passed in?)
 * AC-only story view
 * consolidate spec styles
+* rallycat list stories are colored based on schedule state
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ## Ideas
 
 rallycat list -s <search phrase>    # do a contains lookup for an iteration
+
+rallycat list -pdacb # Filter by schedule states
 
 Keep a log of last (n) stories typed into `cat` so the default action for
   `rallycat cat` will list the last (n) stories for the user.
