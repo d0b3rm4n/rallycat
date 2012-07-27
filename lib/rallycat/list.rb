@@ -14,9 +14,9 @@ module Rallycat
       project = find_project(project_name)
 
       iterations = @api.find_all(:iteration, {
-        project: project,
-        order: 'StartDate desc',
-        pagesize: 10
+        :project  => project,
+        :order    => 'StartDate desc',
+        :pagesize => 10
       }).results
 
       if iterations.count == 0
@@ -43,15 +43,15 @@ module Rallycat
       iteration = find_iteration(iteration_name, project)
 
       stories = @api.find(:hierarchical_requirement, {
-        project: project,
-        pagesize: 100,
-        fetch: true
+        :project  => project,
+        :pagesize => 100,
+        :fetch    => true
       }) { equal :iteration, iteration }.results
 
       stories += @api.find(:defect, {
-        project: project,
-        pagesize: 100,
-        fetch: true
+        :project  => project,
+        :pagesize => 100,
+        :fetch    => true
       }) { equal :iteration, iteration }.results
 
       if stories.count == 0
@@ -61,7 +61,7 @@ module Rallycat
       list = %{# Stories for iteration "#{iteration_name}" - "#{project_name}"\n\n}
 
       stories.each do |story|
-        state = story.schedule_state == 'In-Progress' ? 'P' : story.schedule_state[0]
+        state = story.schedule_state == 'In-Progress' ? 'P' : story.schedule_state.split('')[0]
         list += "* [#{story.formatted_i_d}] [#{state}] #{story.name}\n"
       end
 

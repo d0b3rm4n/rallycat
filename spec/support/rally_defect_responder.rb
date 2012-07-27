@@ -3,8 +3,8 @@ class RallyDefectResponder < GenericResponder
   def call(env)
     @requests << request = Rack::Request.new(env)
 
-    case request.url
-    when "https://rally1.rallydev.com/slm/webservice/current/Defect?query=%28FormattedId+%3D+DE1234%29&fetch=true"
+    case request.path
+    when "/slm/webservice/current/Defect"
       [200, {}, [
         <<-XML
           <QueryResult>
@@ -25,6 +25,8 @@ class RallyDefectResponder < GenericResponder
           </QueryResult>
 XML
       ]]
+    else
+      RallyNoResultsResponder.new.call(env)
     end
   end
 end

@@ -4,12 +4,7 @@ require 'cgi'
 describe Rallycat::Cat, '#story' do
 
   before do
-    responder = lambda do |env|
-      # 'https://rally1.rallydev.com/slm/webservice/current/user'
-      [200, {}, ['<foo>bar</foo>']]
-    end
-
-    Artifice.activate_with responder do
+    Artifice.activate_with RallyAuthResponder.new do
       @api = Rallycat::Connection.new('foo.bar@rallycat.com', 'password').api
     end
   end
@@ -127,22 +122,7 @@ STORY
   end
 
   it 'raises when the story does not exist' do
-    responder = lambda do |env|
-      [200, {}, [
-        <<-XML
-          <QueryResult rallyAPIMajor="1" rallyAPIMinor="17">
-          <Errors/>
-          <Warnings/>
-          <TotalResultCount>0</TotalResultCount>
-          <StartIndex>1</StartIndex>
-          <PageSize>20</PageSize>
-          <Results/>
-          </QueryResult>
-        XML
-      ]]
-    end
-
-    Artifice.activate_with responder do
+    Artifice.activate_with RallyNoResultsResponder.new do
       story_num = "US9999"
       cat = Rallycat::Cat.new(@api)
 

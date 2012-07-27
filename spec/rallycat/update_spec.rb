@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe Rallycat::Update do
-  before do
-    auth_responder = lambda do |env|
-      # 'https://rally1.rallydev.com/slm/webservice/current/user'
-      [200, {}, ['<foo>bar</foo>']]
-    end
+  def get_post_request(responder)
+    responder.requests.detect {|request| request.post? }
+  end
 
-    Artifice.activate_with auth_responder do
+  before do
+    Artifice.activate_with RallyAuthResponder.new do
       @api = Rallycat::Connection.new('foo.bar@rallycat.com', 'password').api
     end
   end
@@ -21,12 +20,12 @@ describe Rallycat::Update do
       Artifice.activate_with responder do
         task_num = "TA6666"
         update = Rallycat::Update.new(@api)
-        update.task(task_num, state: "In-Progress")
+        update.task(task_num, :state => "In-Progress")
       end
 
-      post_request = responder.requests[2] # this is the request that actually updates the task
-      post_request.should be_post
-      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+      post_request = get_post_request(responder)
+
+      post_request.path.should == '/slm/webservice/1.17/task/12345'
 
       body =  post_request.body.tap(&:rewind).read
       body.should include('<Blocked>false</Blocked>')
@@ -40,13 +39,13 @@ describe Rallycat::Update do
       Artifice.activate_with responder do
         task_num = "TA6666"
         update = Rallycat::Update.new(@api)
-        message = update.task(task_num, state: "In-Progress", blocked: true)
+        message = update.task(task_num, :state => "In-Progress", :blocked => true)
         message.should include('Task (TA6666) was set to "In-Progress"')
       end
 
-      post_request = responder.requests[2] # this is the request that actually updates the task
-      post_request.should be_post
-      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+      post_request = get_post_request(responder)
+
+      post_request.path.should == '/slm/webservice/1.17/task/12345'
 
       body =  post_request.body.tap(&:rewind).read
       body.should include('<Blocked>true</Blocked>')
@@ -59,12 +58,12 @@ describe Rallycat::Update do
       Artifice.activate_with responder do
         task_num = "TA6666"
         update = Rallycat::Update.new(@api)
-        message = update.task(task_num, state: "Completed")
+        message = update.task(task_num, :state => "Completed")
       end
 
-      post_request = responder.requests[2] # this is the request that actually updates the task
-      post_request.should be_post
-      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+      post_request = get_post_request(responder)
+
+      post_request.path.should == '/slm/webservice/1.17/task/12345'
 
       body =  post_request.body.tap(&:rewind).read
       body.should include('<State>Completed</State>')
@@ -78,13 +77,13 @@ describe Rallycat::Update do
       Artifice.activate_with responder do
         task_num = "TA6666"
         update = Rallycat::Update.new(@api)
-        message = update.task(task_num, blocked: true)
+        message = update.task(task_num, :blocked => true)
         message.should include('Task (TA6666) was blocked.')
       end
 
-      post_request = responder.requests[2] # this is the request that actually updates the task
-      post_request.should be_post
-      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+      post_request = get_post_request(responder)
+
+      post_request.path.should == '/slm/webservice/1.17/task/12345'
 
       body =  post_request.body.tap(&:rewind).read
       body.should include('<Blocked>true</Blocked>')
@@ -96,13 +95,13 @@ describe Rallycat::Update do
       Artifice.activate_with responder do
         task_num = "TA6666"
         update = Rallycat::Update.new(@api)
-        message = update.task(task_num, state: 'Completed', owner: 'Freddy Fender')
+        message = update.task(task_num, :state => 'Completed', :owner => 'Freddy Fender')
         message.should include('Task (TA6666) was assigned to "Freddy Fender"')
       end
 
-      post_request = responder.requests[4] # this is the request that actually updates the task
-      post_request.should be_post
-      post_request.url.should == 'https://rally1.rallydev.com/slm/webservice/1.17/task/12345'
+      post_request = get_post_request(responder)
+
+      post_request.path.should == '/slm/webservice/1.17/task/12345'
 
       body =  post_request.body.tap(&:rewind).read
       body.should include('<State>Completed</State>')
@@ -118,7 +117,7 @@ describe Rallycat::Update do
       update = Rallycat::Update.new(@api)
 
       lambda {
-        update.task(task_num, state: 'Completed', owner: 'Norman Notreal')
+        update.task(task_num, :state => 'Completed', :owner => 'Norman Notreal')
       }.should raise_error(Rallycat::UserNotFound, 'User (Norman Notreal) does not exist.')
     end
   end
@@ -131,9 +130,8 @@ describe Rallycat::Update do
       update = Rallycat::Update.new(@api)
 
       lambda {
-        update.task(task_num, state: 'Completed')
+        update.task(task_num, :state => 'Completed')
       }.should raise_error(Rallycat::TaskNotFound, 'Task (TA6666) does not exist.')
     end
-
   end
 end

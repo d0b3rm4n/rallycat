@@ -6,7 +6,6 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'rallycat'
-require 'pry'
 require 'rally_rest_api'
 require 'artifice'
 

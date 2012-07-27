@@ -5,8 +5,8 @@ class RallyStoryResponder < GenericResponder
   def call(env)
     @requests << request = Rack::Request.new(env)
 
-    case request.url
-    when 'https://rally1.rallydev.com/slm/webservice/1.17/task/1'
+    case request.path
+    when '/slm/webservice/1.17/task/1'
       [200, {}, [
         <<-XML
           <Task refObjectName="Change link to button">
@@ -16,7 +16,7 @@ class RallyStoryResponder < GenericResponder
           </Task>
 XML
       ]]
-    when 'https://rally1.rallydev.com/slm/webservice/1.17/task/2'
+    when '/slm/webservice/1.17/task/2'
       [200, {}, [
         <<-XML
           <Task refObjectName="Add confirmation">
@@ -26,7 +26,7 @@ XML
           </Task>
 XML
       ]]
-    when 'https://rally1.rallydev.com/slm/webservice/1.17/task/3'
+    when '/slm/webservice/1.17/task/3'
       [200, {}, [
         <<-XML
           <Task refObjectName="Code Review">
@@ -36,7 +36,7 @@ XML
           </Task>
 XML
       ]]
-    when 'https://rally1.rallydev.com/slm/webservice/1.17/task/4'
+    when '/slm/webservice/1.17/task/4'
       [200, {}, [
         <<-XML
           <Task refObjectName="QA Test">
@@ -46,8 +46,7 @@ XML
           </Task>
 XML
       ]]
-    else
-      # https://rally1.rallydev.com/slm/webservice/current/HierarchicalRequirement?query=%28FormattedId+%3D+US7176%29&fetch=true
+    when '/slm/webservice/current/HierarchicalRequirement'
       [200, {}, [
         <<-XML
           <QueryResult>
@@ -74,6 +73,8 @@ XML
           </QueryResult>
 XML
       ]]
+    else
+      RallyNoResultsResponder.new.call(env)
     end
   end
 end

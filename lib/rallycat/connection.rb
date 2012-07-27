@@ -16,10 +16,10 @@ module Rallycat
         logger = ENV['RALLY_DEBUG'] ? Logger.new(STDOUT) : Logger.new(nil)
 
         @api = RallyRestAPI.new \
-         base_url: 'https://rally1.rallydev.com/slm',
-         username: username,
-         password: password,
-         logger: logger
+         :base_url => 'https://rally1.rallydev.com/slm',
+         :username => username,
+         :password => password,
+         :logger   => logger
 
       rescue Rally::NotAuthenticatedError
         raise InvalidCredentialsError.new('Your Rally credentials are invalid.')
