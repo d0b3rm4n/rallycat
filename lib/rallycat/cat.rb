@@ -10,7 +10,7 @@ module Rallycat
     def story(story_number)
       story_type = story_number.start_with?('US') ? :hierarchical_requirement : :defect
 
-      results = @rally_api.find(story_type, fetch: true) do
+      results = @rally_api.find(story_type, :fetch => true) do
         equal :formatted_id, story_number
       end
 
@@ -57,7 +57,7 @@ TEXT
       # [TA12345] [C] The name of the task.
       #
       sorted_tasks.map do |task|
-        state =  task.state == 'In-Progress' ? 'P' : task.state[0]
+        state =  task.state == 'In-Progress' ? 'P' : task.state.split('')[0]
         "[#{task.formatted_i_d}] [#{state}] #{task.name}"
       end.join("\n")
     end

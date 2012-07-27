@@ -2,10 +2,12 @@ class RallyAuthResponder < GenericResponder
 
   def call(env)
     @requests << request = Rack::Request.new(env)
-    if request.url == 'https://rally1.rallydev.com/slm/webservice/current/user'
+
+    case request.path
+    when '/slm/webservice/current/user'
       [200, {}, ['<User><DisplayName></DisplayName></User>']]
     else
-      [500, {}, ['oh noes']]
+      [500, {}, ['No user was found']]
     end
   end
 end

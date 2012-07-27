@@ -20,4 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'rally_rest_api'
   gem.add_dependency 'nokogiri'
 
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'artifice'
+  gem.add_development_dependency 'rspec'
 end

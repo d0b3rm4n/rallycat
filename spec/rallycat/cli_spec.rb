@@ -27,8 +27,8 @@ describe Rallycat::CLI, '#options' do
     cli  = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password help }, sout
 
     cli.options.should == {
-      username: 'foo.bar@rallycat.com',
-      password: 'password'
+      :username => 'foo.bar@rallycat.com',
+      :password => 'password'
     }
   end
 
@@ -45,10 +45,10 @@ describe Rallycat::CLI, '#options' do
     cli  = Rallycat::CLI.new %w{ -u foo.bar@rallycat.com -p password update -p TA6666 -b }, sout
 
     cli.options.should == {
-      username:    'foo.bar@rallycat.com',
-      password:    'password',
-      in_progress: true,
-      blocked:     true
+      :username    => 'foo.bar@rallycat.com',
+      :password    => 'password',
+      :in_progress => true,
+      :blocked     => true
     }
   end
 
@@ -57,8 +57,8 @@ describe Rallycat::CLI, '#options' do
     cli  = Rallycat::CLI.new %w{ update TA6666 -pb }, sout
 
     cli.options.should == {
-      in_progress: true,
-      blocked:     true
+      :in_progress => true,
+      :blocked     => true
     }
   end
 end
